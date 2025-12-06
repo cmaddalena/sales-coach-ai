@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Coach AI</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  
+  <div id="wizard-container" class="container">
+    <div id="wizard-content">
+      <h1>🤖 Sales Coach AI</h1>
+      <p>Voy a ayudarte a armar tu sistema comercial completo.</p>
+      <p>15-20 minutos.</p>
+      <button class="btn-primary" onclick="Wizard.start()">Empezar</button>
+      <button class="btn-secondary" onclick="App.ofrecerRestaurar()">Restaurar desde Excel</button>
+    </div>
+  </div>
+  
+  <div id="chat-container" class="container hidden">
+    <div id="chat-header">
+      <h2>Sales Coach AI</h2>
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="label">Semana</span>
+          <span class="value" id="stat-semana">0/20</span>
+        </div>
+        <div class="stat">
+          <span class="label">Demos</span>
+          <span class="value" id="stat-demos">0/3</span>
+        </div>
+        <div class="stat">
+          <span class="label">Revenue</span>
+          <span class="value" id="stat-revenue">$0</span>
+        </div>
+      </div>
+    </div>
+    
+    <div id="messages"></div>
+    
+    <div id="input-container">
+      <textarea id="user-input" placeholder="Escribe aquí..." rows="2"></textarea>
+      <button id="send-btn" onclick="Chat.send()">Enviar</button>
+    </div>
+  </div>
+  
+  <div id="loading" class="hidden">
+    <div class="spinner"></div>
+    <p id="loading-text">Procesando...</p>
+  </div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/excel-handler.js"></script>
+  <script src="js/wizard.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/app.js"></script>
+  
+</body>
+</html>

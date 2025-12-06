@@ -1,0 +1,17 @@
+﻿{
+  "canales": {
+    "linkedin_warm": {
+      "nombre": "LinkedIn Warm Networking",
+      "categoria": "Outbound Social",
+      "funciona_para": ["B2B Servicios", "B2B SaaS", "Consultorías"],
+      "no_funciona_para": ["B2C masivo", "Retail bajo ticket"],
+      "metricas_benchmark": {
+        "argentina": {
+          "respuesta_warm": 78,
+          "conversion": 11,
+          "roi": 1200
+        }
+      }
+    }
+  }
+}

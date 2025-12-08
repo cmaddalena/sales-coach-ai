@@ -12,19 +12,6 @@
     window.SUPABASE_URL = "https://vrauyvcwmgqlbqrnkngx.supabase.co";
     window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyYXV5dmN3bWdxbGJxcm5rbmd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMTY5NTgsImV4cCI6MjA4MDU5Mjk1OH0.5RwraVx_nOWFrVfrT851q8SL475DuTvJS6Mep1GK8Rk";
   </script>
-  
-  <!-- Auth Check -->
-  <script type="module">
-    import { supabase } from './js/supabase-client.js';
-    
-    // Check if user is logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        // Not logged in, redirect to login
-        window.location.href = '/login.html';
-      }
-    });
-  </script>
 </head>
 <body>
   

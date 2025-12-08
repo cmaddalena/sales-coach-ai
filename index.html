@@ -13,8 +13,6 @@
     window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyYXV5dmN3bWdxbGJxcm5rbmd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMTY5NTgsImV4cCI6MjA4MDU5Mjk1OH0.5RwraVx_nOWFrVfrT851q8SL475DuTvJS6Mep1GK8Rk";
   </script>
   
-  <!-- Auth Check -->
-  <script>
     <!-- Auth Check -->
 <script>
   const script = document.createElement('script');
@@ -25,7 +23,7 @@
     
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        window.location.href = '/login.html';
+        window.location.href = '/auth.html';
       }
     });
   };

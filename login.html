@@ -41,16 +41,16 @@
     </div>
     
     <script>
-        // Cargar Supabase desde CDN
+         // Cargar Supabase desde UMD bundle
         const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+	script.src = 'https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js';
         script.onload = initLogin;
         document.head.appendChild(script);
         
         let supabase;
         
         function initLogin() {
-            const { createClient } = window.supabase;
+            const createClient = window.supabase.createClient;
             
             supabase = createClient(
                 window.SUPABASE_URL,

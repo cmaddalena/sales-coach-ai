@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sales Coach AI</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>🤖 Sales Coach AI</h1>
+            <p>Ingresá para continuar</p>
+            
+            <div id="login-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button id="login-btn">Ingresar</button>
+                <p class="switch-mode">
+                    ¿No tenés cuenta? <a href="#" id="show-signup">Crear cuenta</a>
+                </p>
+            </div>
+            
+            <div id="signup-form" style="display:none;">
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Password (mín 6 caracteres)" required>
+                <button id="signup-btn">Crear cuenta</button>
+                <p class="switch-mode">
+                    ¿Ya tenés cuenta? <a href="#" id="show-login">Ingresar</a>
+                </p>
+            </div>
+            
+            <div id="error-msg" class="error" style="display:none;"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { supabase, signIn, signUp } from './js/supabase-client.js';
+        
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const errorMsg = document.getElementById('error-msg');
+        
+        document.getElementById('show-signup').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+            errorMsg.style.display = 'none';
+        });
+        
+        document.getElementById('show-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            errorMsg.style.display = 'none';
+        });
+        
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showError('Por favor completa email y password');
+                return;
+            }
+            
+            const { data, error } = await signIn(email, password);
+            
+            if (error) {
+                showError(error.message);
+            } else {
+                window.location.href = '/';
+            }
+        });
+        
+        document.getElementById('signup-btn').addEventListener('click', async () => {
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            if (!email || !password) {
+                showError('Por favor completa email y password');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            const { data, error } = await signUp(email, password);
+            
+            if (error) {
+                showError(error.message);
+            } else {
+                showError('Cuenta creada! Chequea tu email para confirmar.', false);
+                setTimeout(() => {
+                    signupForm.style.display = 'none';
+                    loginForm.style.display = 'block';
+                }, 2000);
+            }
+        });
+        
+        function showError(msg, isError = true) {
+            errorMsg.textContent = msg;
+            errorMsg.style.display = 'block';
+            errorMsg.className = isError ? 'error' : 'success';
+        }
+        
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) {
+                window.location.href = '/';
+            }
+        });
+    </script>
+</body>
+</html>

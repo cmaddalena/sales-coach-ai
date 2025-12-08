@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "sales-coach-ai",
   "version": "1.0.0",
   "description": "AI Sales Coach - Sistema comercial inteligente",
@@ -7,10 +7,16 @@
     "dev": "vercel dev",
     "deploy": "vercel --prod"
   },
-  "keywords": ["sales", "ai", "coach", "crm"],
+  "keywords": [
+    "sales",
+    "ai",
+    "coach",
+    "crm"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^2.86.2",
     "openai": "^4.20.1"
   },
   "devDependencies": {

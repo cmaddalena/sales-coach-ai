@@ -1,41 +1,520 @@
-<!-- En dashboard.html, dentro del <main> después de welcome-card -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Sales Coach AI</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
 
-<div class="navigation-card">
-  <h3>🧭 Navegación</h3>
-  <a href="/dashboard-coach.html" class="nav-link">
-    🧠 Tu Coach Personal
-  </a>
-  <a href="/leads.html" class="nav-link">
-    👥 Mis Leads
-  </a>
-  <a href="/chat.html" class="nav-link">
-    💬 Chat IA
-  </a>
-</div>
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="logo">🤖 Sales Coach AI</div>
+    <div class="user-menu">
+      <span id="user-name">Usuario</span>
+      <button id="logout-btn" onclick="logout()">Salir</button>
+    </div>
+  </header>
 
-<style>
-.navigation-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 30px;
-}
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    
+    <!-- Welcome Card -->
+    <div class="welcome-card">
+      <h1>Hola <span id="nombre-usuario">Usuario</span>! 👋</h1>
+      <p id="tipo-negocio">Sistema comercial completo.</p>
+    </div>
+    
+    <!-- Tabs Navigation -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('overview')">📊 Overview</button>
+      <button class="tab" onclick="showTab('coach')">🧠 Tu Coach</button>
+      <button class="tab" onclick="showTab('leads')">👥 Leads</button>
+    </div>
+    
+    <!-- TAB: Overview -->
+    <div id="tab-overview" class="tab-content active">
+      
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Objetivo Mes</h3>
+          <p class="stat-value" id="objetivo-mes">$0</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3>Revenue Actual</h3>
+          <p class="stat-value" id="revenue-actual">$0</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3>Tiempo Disponible</h3>
+          <p class="stat-value" id="tiempo-disponible">0h/sem</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3>Leads Activos</h3>
+          <p class="stat-value" id="leads-count">0</p>
+        </div>
+      </div>
+      
+      <!-- Action Cards -->
+      <div class="action-cards">
+        <div class="action-card">
+          <h3>🎯 Próximas Acciones</h3>
+          <p>Sistema en construcción...</p>
+          <ul>
+            <li>Morning Briefing automático</li>
+            <li>Recomendaciones inteligentes</li>
+            <li>Tracking leads</li>
+            <li>Chat con IA contextual</li>
+          </ul>
+        </div>
+        
+        <div class="action-card">
+          <h3>📋 Tu Perfil</h3>
+          <p><strong>Nombre:</strong> <span id="perfil-nombre">-</span></p>
+          <p><strong>Negocio:</strong> <span id="perfil-negocio">-</span></p>
+          <p><strong>País:</strong> <span id="perfil-pais">-</span></p>
+          <p><strong>Objetivo mensual:</strong> $<span id="perfil-objetivo">-</span></p>
+          <p><strong>Tiempo disponible:</strong> <span id="perfil-tiempo">-</span>h/semana</p>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- TAB: Coach -->
+    <div id="tab-coach" class="tab-content">
+      
+      <!-- Frase del Día -->
+      <div class="coach-motivacion">
+        <div class="quote-icon">💪</div>
+        <p id="frase-dia" class="frase">Cargando tu coach personal...</p>
+      </div>
+      
+      <!-- Estado Actual -->
+      <div class="coach-estado">
+        <h3>📈 Tu momento:</h3>
+        
+        <div class="estado-grid">
+          <div class="estado-item">
+            <label>Energía</label>
+            <div class="progress-bar">
+              <div id="energia-bar" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="energia-text">7/10</span>
+          </div>
+          
+          <div class="estado-item">
+            <label>Motivación</label>
+            <div class="progress-bar">
+              <div id="motivacion-bar" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="motivacion-text">7/10</span>
+          </div>
+          
+          <div class="estado-item">
+            <label>Progreso mes</label>
+            <div class="progress-bar">
+              <div id="progreso-bar" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="progreso-text">0%</span>
+          </div>
+        </div>
+        
+        <button onclick="reportarEstado()" class="btn-secondary">
+          ¿Cómo te sentís hoy?
+        </button>
+      </div>
+      
+      <!-- Situación + Plan -->
+      <div class="coach-situacion">
+        <h3 id="situacion-title">🎯 Analizando situación...</h3>
+        <p id="situacion-descripcion">Generando recomendaciones...</p>
+      </div>
+      
+      <div class="coach-plan">
+        <h3>💡 Qué hacer AHORA:</h3>
+        <div id="plan-acciones">
+          <p>Cargando plan personalizado...</p>
+        </div>
+      </div>
+      
+      <!-- Botón Pánico -->
+      <div class="coach-panico">
+        <button onclick="activarModoCoach()" class="btn-panico">
+          🆘 Necesito ayuda YA
+        </button>
+        <p class="panico-hint">Trigger chat IA modo "coach emocional"</p>
+      </div>
+      
+    </div>
+    
+    <!-- TAB: Leads -->
+    <div id="tab-leads" class="tab-content">
+      <div class="coming-soon">
+        <h2>👥 Gestión de Leads</h2>
+        <p>Próximamente: CRUD completo de contactos, temperatura, scoring automático.</p>
+      </div>
+    </div>
+    
+  </main>
 
-.nav-link {
-  display: block;
-  padding: 15px 20px;
-  margin: 10px 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: transform 0.2s;
-}
+  <!-- Styles -->
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+    
+    .dashboard-header {
+      background: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .logo { font-size: 24px; font-weight: bold; }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    #logout-btn {
+      background: #f0f0f0;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .dashboard-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    
+    .welcome-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    
+    .welcome-card h1 { margin-bottom: 10px; }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      background: white;
+      padding: 10px;
+      border-radius: 12px;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 15px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .tab:hover { background: #f0f0f0; }
+    .tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .stat-card h3 {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #667eea;
+    }
+    
+    /* Action Cards */
+    .action-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .action-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .action-card h3 { margin-bottom: 15px; }
+    .action-card ul { padding-left: 20px; margin-top: 10px; }
+    .action-card li { margin: 8px 0; }
+    
+    /* Coach Styles */
+    .coach-motivacion {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .quote-icon { font-size: 48px; margin-bottom: 15px; }
+    .frase { font-size: 20px; line-height: 1.6; font-style: italic; }
+    
+    .coach-estado, .coach-situacion, .coach-plan, .coach-panico {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .estado-grid { display: grid; gap: 20px; margin-bottom: 20px; }
+    .estado-item label { display: block; font-size: 14px; color: #666; margin-bottom: 8px; }
+    
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+    }
+    
+    .btn-secondary, .btn-panico {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+      width: 100%;
+    }
+    
+    .btn-panico {
+      background: #ff4444;
+      color: white;
+      font-size: 18px;
+      padding: 20px 40px;
+      box-shadow: 0 4px 12px rgba(255,68,68,0.3);
+    }
+    
+    .coach-panico { text-align: center; padding: 40px 25px; }
+    .panico-hint { margin-top: 10px; font-size: 12px; color: #999; }
+    
+    .coming-soon {
+      background: white;
+      padding: 60px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    
+    .coming-soon h2 { margin-bottom: 20px; }
+  </style>
 
-.nav-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-</style>
+  <!-- Scripts -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+  
+  <script>
+    let supabase;
+    let currentUser;
+    
+    async function init() {
+      const createClient = window.supabase.createClient;
+      supabase = createClient(
+        'https://vrauyvcwmgqlbqrnkngx.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyYXV5dmN3bWdxbGJxcm5rbmd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMTY5NTgsImV4cCI6MjA4MDU5Mjk1OH0.5RwraVx_nOWFrVfrT851q8SL475DuTvJS6Mep1GK8Rk'
+      );
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        window.location.href = '/auth.html';
+        return;
+      }
+      
+      currentUser = user;
+      document.getElementById('user-name').textContent = user.email.split('@')[0];
+      
+      await loadProfile();
+    }
+    
+    async function loadProfile() {
+      try {
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .single();
+        
+        if (profile) {
+          document.getElementById('nombre-usuario').textContent = profile.nombre;
+          document.getElementById('tipo-negocio').textContent = profile.tipo_negocio;
+          
+          // Stats
+          document.getElementById('objetivo-mes').textContent = `$${profile.objetivo_revenue_mensual || 0}`;
+          document.getElementById('tiempo-disponible').textContent = `${profile.horas_semana_ventas || 0}h/sem`;
+          
+          // Perfil
+          document.getElementById('perfil-nombre').textContent = profile.nombre;
+          document.getElementById('perfil-negocio').textContent = profile.tipo_negocio;
+          document.getElementById('perfil-pais').textContent = profile.pais || '-';
+          document.getElementById('perfil-objetivo').textContent = profile.objetivo_revenue_mensual || 0;
+          document.getElementById('perfil-tiempo').textContent = profile.horas_semana_ventas || 0;
+        }
+        
+        // Objetivo
+        const { data: objetivo } = await supabase
+          .from('objetivos')
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .eq('tipo', 'revenue_total')
+          .single();
+        
+        if (objetivo) {
+          document.getElementById('revenue-actual').textContent = `$${objetivo.valor_actual || 0}`;
+        }
+        
+        // Leads count
+        const { count } = await supabase
+          .from('contactos')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', currentUser.id);
+        
+        document.getElementById('leads-count').textContent = count || 0;
+        
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = '/auth.html';
+    }
+    
+    function showTab(tabName) {
+      // Hide all
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      
+      // Show selected
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      event.target.classList.add('active');
+      
+      // Load coach data if coach tab
+      if (tabName === 'coach') {
+        loadCoachData();
+      }
+    }
+    
+    async function loadCoachData() {
+      try {
+        document.getElementById('frase-dia').textContent = 'Analizando tu situación...';
+        
+        const response = await fetch('/api/motor-decision-core', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: currentUser.id })
+        });
+        
+        if (!response.ok) throw new Error('Error');
+        
+        const data = await response.json();
+        renderCoachData(data);
+        
+      } catch (error) {
+        console.error('Error coach:', error);
+        document.getElementById('frase-dia').textContent = 'Error cargando coach. Por favor refrescá.';
+      }
+    }
+    
+    function renderCoachData(data) {
+      const { situation, plan, message } = data;
+      
+      // Frase
+      document.getElementById('frase-dia').textContent = 
+        plan.frase_motivacional || message.substring(0, 150) || 'Estás haciendo un gran trabajo. Seguí así! 💪';
+      
+      // Estado
+      const energia = situation?.emotional?.energia || 7;
+      const motivacion = situation?.emotional?.motivacion || 7;
+      const progreso = (situation?.progress?.porcentaje * 100) || 0;
+      
+      document.getElementById('energia-bar').style.width = `${energia * 10}%`;
+      document.getElementById('energia-text').textContent = `${energia}/10`;
+      
+      document.getElementById('motivacion-bar').style.width = `${motivacion * 10}%`;
+      document.getElementById('motivacion-text').textContent = `${motivacion}/10`;
+      
+      document.getElementById('progreso-bar').style.width = `${progreso}%`;
+      document.getElementById('progreso-text').textContent = `${progreso.toFixed(0)}%`;
+      
+      // Situación
+      document.getElementById('situacion-title').textContent = `🎯 ${data.critical_lever?.type || 'Situación'} `;
+      document.getElementById('situacion-descripcion').textContent = data.critical_lever?.reasoning || 'Analizando...';
+      
+      // Plan
+      const planContainer = document.getElementById('plan-acciones');
+      planContainer.innerHTML = '<p>Plan personalizado generado! Check consola para ver detalles.</p>';
+      console.log('PLAN COMPLETO:', data);
+    }
+    
+    function reportarEstado() {
+      alert('Modal estado próximamente. Por ahora check consola.');
+    }
+    
+    function activarModoCoach() {
+      alert('Chat IA modo coach próximamente!');
+    }
+    
+    // Init
+    init();
+  </script>
+
+</body>
+</html>

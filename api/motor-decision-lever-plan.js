@@ -389,6 +389,104 @@ async function generatePipelineEmergencyPlan(situation, profile, whatWorks) {
 
 
 // ═══════════════════════════════════════════════════════════════
+// PLAN ESPECÍFICO: Prospecting Sprint
+// ═══════════════════════════════════════════════════════════════
+
+async function generateProspectingSprintPlan(situation, profile, whatWorks) {
+  
+  const { pipeline, progress, timing } = situation;
+  
+  // Similar a pipeline emergency pero con foco en GAP específico
+  const leadsNecesarios = Math.ceil(progress.gap / 700 * 6); // 15% conversión total
+  const contactosPorDia = Math.ceil(leadsNecesarios / Math.max(progress.dias_restantes, 1));
+  
+  // Mejor canal
+  const mejorCanal = whatWorks.canal?.mejor_canal || 'linkedin';
+  const mejorHorario = whatWorks.timing?.mejor_horario || timing.mejor_momento_hoy || '10:00-11:00';
+  
+  // Speech validado
+  const speech = whatWorks.speech?.mejor_speech || 
+    `Hola [nombre], vi que [empresa] está [observación]. Tenemos [resultado] para [tipo empresa] como la tuya. ¿15 min esta semana?`;
+  
+  return {
+    type: 'prospecting_sprint',
+    mensaje_principal: `${profile.nombre}, GAP $${progress.gap.toFixed(0)} con ${progress.dias_restantes} días. Sprint intensivo necesario.`,
+    
+    diagnostico: {
+      gap_actual: `$${progress.gap.toFixed(0)}`,
+      gap_porcentaje: `${(progress.gap / progress.objetivo * 100).toFixed(0)}%`,
+      dias_restantes: progress.dias_restantes,
+      velocidad_actual: `$${progress.velocidad_actual.toFixed(0)}/día`,
+      velocidad_necesaria: `$${progress.velocidad_necesaria.toFixed(0)}/día`,
+      deficit: `$${(progress.velocidad_necesaria - progress.velocidad_actual).toFixed(0)}/día`,
+      urgencia: 'CRÍTICA'
+    },
+    
+    plan_sprint: {
+      duracion: `${progress.dias_restantes} días`,
+      objetivo_diario: contactosPorDia,
+      objetivo_total: leadsNecesarios,
+      
+      breakdown_inverso: {
+        cierres_necesarios: Math.ceil(progress.gap / 700),
+        demos_necesarias: Math.ceil(progress.gap / 700 * 2.5), // 40% conversión demo→cierre
+        respuestas_necesarias: Math.ceil(progress.gap / 700 * 5), // 50% respuesta→demo
+        contactos_necesarios: leadsNecesarios, // 30% contacto→respuesta
+        logica: 'Trabajando backwards desde gap'
+      },
+      
+      metodologia: {
+        canal: mejorCanal,
+        horario_optimo: mejorHorario,
+        speech: speech,
+        conversion_esperada: whatWorks.canal?.tasa_exito || 0.15,
+        tiempo_por_contacto: '5-7 min',
+        tiempo_total_dia: `${Math.ceil(contactosPorDia * 6 / 60)} horas/día`
+      },
+      
+      calendario_sprint: generateSprintCalendar(progress.dias_restantes, contactosPorDia),
+      
+      tracking: {
+        meta_dia: contactosPorDia,
+        checkpoint: 'Evaluar cada 2 días',
+        pivot_trigger: 'Si conversión <10% después día 2, cambiar approach'
+      }
+    },
+    
+    riesgos: {
+      burnout: 'Alto volumen puede agotar. Priorizar calidad sobre cantidad si ves que baja conversión.',
+      realismo: progress.dias_restantes < 5 ? 'Gap puede ser muy grande para tiempo disponible. Considera ajustar objetivo.' : 'Realista con ejecución disciplinada.',
+      alternativas: progress.dias_restantes < 3 ? 'Considerar cerrar leads calientes existentes vs prospectar nuevos' : null
+    },
+    
+    motivacion: `Es intenso, pero tu data dice que podés. ${mejorCanal} + ${mejorHorario} = ${((whatWorks.canal?.tasa_exito || 0.15) * 100).toFixed(0)}% conversión. ${contactosPorDia} contactos/día × ${progress.dias_restantes} días = objetivo cumplido.`,
+    
+    confidence: progress.dias_restantes >= 7 ? 0.75 : 0.6
+  };
+}
+
+function generateSprintCalendar(dias, contactosPorDia) {
+  const calendar = [];
+  const hoy = new Date();
+  
+  for (let i = 0; i < Math.min(dias, 14); i++) {
+    const fecha = new Date(hoy);
+    fecha.setDate(hoy.getDate() + i);
+    
+    calendar.push({
+      dia: i + 1,
+      fecha: fecha.toLocaleDateString('es-AR'),
+      dia_semana: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'][fecha.getDay()],
+      objetivo: contactosPorDia,
+      checkpoint: (i + 1) % 2 === 0 ? 'Evaluar progreso' : null
+    });
+  }
+  
+  return calendar;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 // PLAN ESPECÍFICO: Proposal Follow-Up
 // ═══════════════════════════════════════════════════════════════
 
@@ -460,6 +558,400 @@ async function generateProposalFollowUpPlan(situation, profile, whatWorks) {
 
 
 // ═══════════════════════════════════════════════════════════════
+// PLAN ESPECÍFICO: Close Existing Demos
+// ═══════════════════════════════════════════════════════════════
+
+async function generateCloseExistingDemosPlan(situation, profile, whatWorks) {
+  
+  const { pipeline, progress } = situation;
+  
+  // Obtener demos pendientes
+  const { data: demos } = await supabase
+    .from('contactos')
+    .select('*')
+    .eq('user_id', profile.user_id)
+    .eq('stage', 'demo')
+    .order('temperatura', { ascending: false });
+  
+  // Calcular días desde demo
+  const demosConDias = (demos || []).map(d => {
+    const diasDesde = Math.floor((Date.now() - new Date(d.stage_fecha_entrada).getTime()) / (1000 * 60 * 60 * 24));
+    return { ...d, dias_desde_demo: diasDesde };
+  });
+  
+  // Priorizar por temperatura y días
+  const urgentes = demosConDias.filter(d => d.dias_desde_demo >= 3 && d.temperatura > 60);
+  const calientes = demosConDias.filter(d => d.temperatura > 70);
+  
+  return {
+    type: 'close_existing_demos',
+    mensaje_principal: `${profile.nombre}, tenés ${pipeline.demos_pendientes} demos pendientes. Cerrarlas vale más que buscar nuevas.`,
+    
+    diagnostico: {
+      demos_pendientes: pipeline.demos_pendientes,
+      valor_estimado: pipeline.demos_pendientes * 700,
+      conversion_esperada: 0.5, // 50% demos → propuesta → cierre
+      valor_esperado: Math.round(pipeline.demos_pendientes * 700 * 0.5)
+    },
+    
+    plan_cierre: {
+      demos_urgentes: urgentes.slice(0, 5).map(d => ({
+        nombre: d.nombre,
+        empresa: d.empresa,
+        dias_desde: d.dias_desde_demo,
+        temperatura: d.temperatura,
+        valor: d.valor_estimado || 700,
+        accion: 'Enviar propuesta HOY',
+        next_step: `Preparar propuesta específica para ${d.empresa}. Follow-up: "Che ${d.nombre}, armé propuesta custom para ${d.empresa}. ¿La vemos mañana?"`
+      })),
+      
+      demos_calientes: calientes.slice(0, 3).map(d => ({
+        nombre: d.nombre,
+        empresa: d.empresa,
+        temperatura: d.temperatura,
+        valor: d.valor_estimado || 700,
+        accion: 'Push para propuesta esta semana',
+        next_step: `Follow-up consultivo. "¿Qué necesitás para que armemos propuesta?"`
+      }))
+    },
+    
+    estrategia: {
+      enfoque: 'Velocidad sin presión',
+      approach: 'Después de demo, ventana de 48-72hs crítica. Curiosidad alta, momento ideal para propuesta.',
+      objeciones_comunes: ['necesito pensarlo', 'consultar con socio', 'presupuesto'],
+      como_manejar: {
+        'necesito pensarlo': 'Che, perfecto. ¿Qué específicamente necesitás evaluar? Te ayudo.',
+        'consultar con socio': '¿Cuándo hablan? Te mando mail resumen para que compartas.',
+        'presupuesto': 'Entiendo. ¿Tenés un rango aprobado? Puedo adaptar plan.'
+      }
+    },
+    
+    motivacion: `Convertir estas ${pipeline.demos_pendientes} demos = $${pipeline.demos_pendientes * 700 * 0.5} sin prospección. ROI 10× vs buscar nuevos.`,
+    
+    confidence: 0.85
+  };
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// PLAN ESPECÍFICO: Momentum Recovery
+// ═══════════════════════════════════════════════════════════════
+
+async function generateMomentumRecoveryPlan(situation, profile, whatWorks) {
+  
+  const { momentum, emotional, pipeline } = situation;
+  
+  // Identificar qué cambió
+  const { data: recentCierres } = await supabase
+    .from('interacciones')
+    .select('*')
+    .eq('user_id', profile.user_id)
+    .eq('resultado', 'cerrado')
+    .gte('fecha', new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString())
+    .order('fecha', { ascending: false });
+  
+  const cierresRecientes = recentCierres?.length || 0;
+  const ultimoCierre = recentCierres?.[0];
+  const diasSinCierre = ultimoCierre 
+    ? Math.floor((Date.now() - new Date(ultimoCierre.fecha).getTime()) / (1000 * 60 * 60 * 24))
+    : 30;
+  
+  return {
+    type: 'momentum_recovery',
+    mensaje_principal: `${profile.nombre}, momentum bajando ${Math.abs(momentum.vs_mes_anterior * 100).toFixed(0)}% vs mes anterior. Generemos quick wins.`,
+    
+    diagnostico: {
+      momentum_actual: momentum.estado,
+      tendencia: momentum.tendencia,
+      vs_mes_anterior: `${(momentum.vs_mes_anterior * 100).toFixed(0)}%`,
+      dias_sin_cierre: diasSinCierre,
+      racha_mejor: momentum.mejor_racha,
+      racha_actual: momentum.racha_actual,
+      gap_racha: momentum.mejor_racha - momentum.racha_actual
+    },
+    
+    plan_recovery: {
+      objetivo: 'Generar 2-3 quick wins en próximos 5 días',
+      
+      quick_wins: [
+        {
+          tipo: 'Cierre fácil',
+          target: 'Lead más caliente (temp >80)',
+          accion: 'Push suave para cerrar',
+          probabilidad: 0.8,
+          tiempo: '1-2 días',
+          impacto_momentum: 'muy alto',
+          script: `Che [nombre], venimos charlando hace ${diasSinCierre > 7 ? 'un tiempo' : 'poco'}. ¿Arrancamos ya o necesitás algo más?`
+        },
+        {
+          tipo: 'Testimonio cliente feliz',
+          target: 'Cliente con mejores resultados',
+          accion: 'Pedir testimonio + caso éxito',
+          probabilidad: 0.9,
+          tiempo: '15 minutos',
+          impacto_momentum: 'medio-alto',
+          script: `Che [cliente], armando casos éxito. ¿Me contás en 2-3 líneas qué cambió desde que arrancaste?`
+        },
+        {
+          tipo: 'Reactivar lead tibio',
+          target: 'Lead temp 50-70 sin contacto >30d',
+          accion: 'Nuevo approach con insight fresh',
+          probabilidad: 0.4,
+          tiempo: '2-3 días',
+          impacto_momentum: 'medio',
+          script: `Che [nombre], vi que [empresa] está [observación]. Pensé en vos porque [insight específico]. ¿Hablamos 15 min?`
+        }
+      ],
+      
+      anti_pattern: {
+        evitar: [
+          'Prospección masiva sin estrategia (agota sin resultados)',
+          'Follow-up desesperado (espanta leads)',
+          'Cambiar strategy completa (confunde)'
+        ],
+        hacer: [
+          'Wins pequeños y visibles',
+          'Volver a lo que funcionaba antes',
+          'Celebrar cada mini-win'
+        ]
+      }
+    },
+    
+    insights: {
+      causa_probable: diasSinCierre > 14 ? 'Ciclo sin cierres' : momentum.racha_actual < 2 ? 'Perdió racha' : 'Normal fluctuation',
+      solucion: 'Quick wins restauran confianza → confianza mejora conversión → conversión genera momentum',
+      tiempo_recovery: '5-7 días con wins consistentes'
+    },
+    
+    motivacion: `Tu mejor racha fue ${momentum.mejor_racha} cierres seguidos. Ya lo hiciste una vez, podés volver ahí. Empecemos con un win fácil.`,
+    
+    confidence: 0.75
+  };
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// PLAN ESPECÍFICO: Lead Reactivation
+// ═══════════════════════════════════════════════════════════════
+
+async function generateLeadReactivationPlan(situation, profile, whatWorks) {
+  
+  const { pipeline } = situation;
+  
+  // Obtener leads fríos con historia
+  const { data: leadsFrios } = await supabase
+    .from('contactos')
+    .select('*')
+    .eq('user_id', profile.user_id)
+    .lt('temperatura', 40)
+    .neq('tipo', 'archivado')
+    .order('ultima_interaccion', { ascending: false })
+    .limit(30);
+  
+  // Segmentar por tipo
+  const conInteraccion = (leadsFrios || []).filter(l => l.ultima_interaccion);
+  const sinInteraccion = (leadsFrios || []).filter(l => !l.ultima_interaccion);
+  
+  // Calcular días desde última interacción
+  const leadsConDias = conInteraccion.map(l => {
+    const diasDesde = Math.floor((Date.now() - new Date(l.ultima_interaccion).getTime()) / (1000 * 60 * 60 * 24));
+    return { ...l, dias_sin_contacto: diasDesde };
+  });
+  
+  // Priorizar: 30-60 días (no muy reciente, no muy viejo)
+  const sweetSpot = leadsConDias.filter(l => l.dias_sin_contacto >= 30 && l.dias_sin_contacto <= 90);
+  
+  return {
+    type: 'lead_reactivation',
+    mensaje_principal: `${profile.nombre}, tenés ${pipeline.frios} leads fríos dormidos. Reactivar 3× más fácil que prospectar desde 0.`,
+    
+    diagnostico: {
+      leads_frios: pipeline.frios,
+      con_historia: conInteraccion.length,
+      sin_historia: sinInteraccion.length,
+      sweet_spot: sweetSpot.length,
+      conversion_esperada: 0.15,
+      valor_estimado: Math.round(sweetSpot.length * 0.15 * 700)
+    },
+    
+    plan_reactivacion: {
+      segmento_1: {
+        nombre: 'Sweet Spot (30-90 días)',
+        cantidad: sweetSpot.length,
+        estrategia: 'Nuevo approach con insight fresh',
+        probabilidad: 0.15,
+        leads: sweetSpot.slice(0, 10).map(l => ({
+          nombre: l.nombre,
+          empresa: l.empresa,
+          dias_sin_contacto: l.dias_sin_contacto,
+          contexto_previo: l.notas || 'Sin notas',
+          nuevo_approach: `Che ${l.nombre}, hace ${l.dias_sin_contacto} días hablamos de [tema]. Desde entonces salió [novedad/insight]. ¿Vale la pena que charlemos 15 min?`
+        }))
+      },
+      
+      segmento_2: {
+        nombre: 'Contactados hace poco (15-30 días)',
+        cantidad: leadsConDias.filter(l => l.dias_sin_contacto < 30).length,
+        estrategia: 'Follow-up suave',
+        probabilidad: 0.1,
+        approach: 'Check-in casual, no vendedor'
+      },
+      
+      segmento_3: {
+        nombre: 'Muy viejos (>90 días)',
+        cantidad: leadsConDias.filter(l => l.dias_sin_contacto > 90).length,
+        estrategia: 'Approach casi como nuevo',
+        probabilidad: 0.05,
+        approach: 'Recomienzo con nuevo value prop'
+      }
+    },
+    
+    mejores_practicas: {
+      que_funciona: [
+        'Mencionar insight nuevo/actualización relevante (no "checking in")',
+        'Reconocer tiempo pasado con humor ("Sé que hace mil que no hablamos...")',
+        'Valor claro upfront ("Tengo algo que creo te puede servir")',
+        'CTA simple (15 min, no "cuándo te viene bien?")'
+      ],
+      que_evitar: [
+        '"Just checking in"',
+        '"Volviendo a contactarte sobre..."',
+        'Pitch largo del producto original',
+        'Presión o urgencia artificial'
+      ]
+    },
+    
+    templates: {
+      sweet_spot: `Che ${profile.nombre}, hace [X días] hablamos de [tema]. Vi que [empresa] está [observación/novedad]. Pensé: esto le sirve. ¿15 min esta semana?`,
+      muy_viejo: `Hola [nombre], sé que hace mucho no hablamos. [Empresa] lanzó [novedad]. Hablamos hace [tiempo] de [tema], creo que ahora tiene más sentido. ¿Vale una charla?`,
+      casual_checkin: `Che [nombre], no sé si seguís con el tema [X] en [empresa], pero salió [novedad]. Si te sirve, te cuento. Sino todo bien igual!`
+    },
+    
+    ejecucion: {
+      ritmo: '5-7 reactivaciones/día',
+      canal: whatWorks.canal?.mejor_canal || 'email + LinkedIn',
+      momento: whatWorks.timing?.mejor_horario || 'Mañana 10-12hs',
+      seguimiento: 'Si no responde en 3 días, un follow-up. Si no responde ahí, archivar.'
+    },
+    
+    motivacion: `Estos leads ya te conocen, ya tuvieron curiosidad antes. Nueva conversación con ellos = 3× más fácil que desde 0. ${sweetSpot.length} sweet spot × 15% conversión = ${Math.ceil(sweetSpot.length * 0.15)} demos.`,
+    
+    confidence: 0.7
+  };
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// PLAN ESPECÍFICO: Optimization
+// ═══════════════════════════════════════════════════════════════
+
+async function generateOptimizationPlan(situation, profile, whatWorks) {
+  
+  const { pipeline, progress, momentum } = situation;
+  
+  // Analizar qué está funcionando mejor
+  const topPatterns = whatWorks.top_patterns || [];
+  
+  return {
+    type: 'optimization',
+    mensaje_principal: `${profile.nombre}, sistema funcionando bien. Momento de optimizar y escalar.`,
+    
+    diagnostico: {
+      progreso_objetivo: `${(progress.porcentaje * 100).toFixed(0)}%`,
+      proyeccion: progress.realista ? 'Realista' : 'Optimista',
+      salud_pipeline: `${(pipeline.salud * 100).toFixed(0)}%`,
+      momentum: momentum.estado,
+      calificacion_general: 'Bueno'
+    },
+    
+    oportunidades_mejora: [
+      {
+        area: 'Eficiencia temporal',
+        oportunidad: 'Doblar lo que funciona en menos tiempo',
+        accion: 'Bloquear slots específicos para actividades high-ROI',
+        impacto: 'medio-alto',
+        implementacion: {
+          paso_1: 'Identificar tu slot más productivo (ej: Martes 10-12)',
+          paso_2: 'Bloquear ese slot semanal SOLO para prospección',
+          paso_3: 'Medir resultados 2 semanas',
+          paso_4: 'Si funciona, agregar otro slot'
+        }
+      },
+      {
+        area: 'Conversión pipeline',
+        oportunidad: `Mejorar conversión de ${pipeline.tibios} leads tibios`,
+        accion: 'Nurturing system (1 touchpoint semanal)',
+        impacto: 'medio',
+        implementacion: {
+          sistema: 'Lunes: insight relevante / Jueves: caso éxito / Sábado: pregunta consultiva',
+          tiempo: '15 min/semana para armar contenido',
+          esperado: `${Math.ceil(pipeline.tibios * 0.1)} leads tibios → calientes (10% conversión)`
+        }
+      },
+      {
+        area: 'Leverage',
+        oportunidad: 'Automatizar/delegar tareas repetitivas',
+        accion: 'Identificar tareas <$20/hora value',
+        impacto: 'alto',
+        ejemplos: [
+          'Investigación pre-contacto → asistente virtual',
+          'Follow-ups simples → templates + scheduling',
+          'Propuestas básicas → template master',
+          'LinkedIn prospecting → Sales Navigator + automatización'
+        ]
+      },
+      {
+        area: 'Learning loops',
+        oportunidad: 'Codificar patterns validados',
+        accion: 'Documentar qué funciona para replicar',
+        impacto: 'medio-alto',
+        implementacion: {
+          que_documentar: topPatterns.map(p => p.pattern_description).join(', '),
+          como: 'Notion/Google Doc con: Qué probé → Qué funcionó → Por qué funcionó → Cómo replicar',
+          frecuencia: 'Review mensual patterns'
+        }
+      }
+    ],
+    
+    plan_90_dias: {
+      mes_1: {
+        objetivo: 'Optimizar eficiencia actual',
+        kpis: [
+          'Identificar top 3 patterns validados',
+          'Bloquear 2 slots semanales high-ROI',
+          'Documentar playbook básico'
+        ]
+      },
+      mes_2: {
+        objetivo: 'Escalar lo que funciona',
+        kpis: [
+          'Doblar volumen actividades high-ROI',
+          'Automatizar 3 tareas repetitivas',
+          'Testear 1 canal nuevo'
+        ]
+      },
+      mes_3: {
+        objetivo: 'Scale & systemize',
+        kpis: [
+          'Pipeline 2× actual',
+          'Sistema nurturing funcionando',
+          'Playbook completo documentado'
+        ]
+      }
+    },
+    
+    insights: {
+      momento: 'Estás en top 20% vendedores que llegan acá. Optimizar ahora te lleva a top 5%.',
+      riesgo: 'Complacencia. Momentum es frágil, mantener ritmo crítico.',
+      recomendacion: 'No cambies nada core. Optimizá en los bordes.'
+    },
+    
+    confidence: 0.7
+  };
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════════
 
@@ -472,5 +964,7 @@ function generateFollowUpScript(contacto, profile, urgencia) {
 }
 
 
-// Exportar funciones
-export { generateProposalFollowUpPlan };
+// Exportar funciones (ya exportadas inline pero por claridad)
+// Las funciones principales ya están exportadas:
+// - export function identifyCriticalLever()
+// - export async function generatePlan()

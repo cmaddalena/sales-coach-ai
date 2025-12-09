@@ -7,18 +7,32 @@ import { createClient } from '@supabase/supabase-js';
 import { identifyCriticalLever, generatePlan } from './motor-decision-lever-plan.js';
 import { craftMessage } from './motor-decision-message.js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY // usar service role en backend
-);
+let supabase;
+
+function initSupabase() {
+  if (!supabase) {
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Missing required environment variables: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+    }
+    supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+  }
+  return supabase;
+}
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
+  if (!['GET', 'POST'].includes(req.method)) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
   
   try {
-    const { userId } = req.body;
+    // Initialize Supabase on first request
+    supabase = initSupabase();
+    
+    // Extract userId from query params (GET) or body (POST)
+    const userId = req.method === 'GET' ? req.query.userId : req.body?.userId;
     
     if (!userId) {
       return res.status(400).json({ error: 'userId required' });
@@ -126,7 +140,17 @@ export default async function handler(req, res) {
     
   } catch (error) {
     console.error('Motor decisión error:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint
+    });
+    res.status(500).json({ 
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 }
 

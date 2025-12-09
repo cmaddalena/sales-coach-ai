@@ -5,10 +5,20 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+let supabase;
+
+function getSupabase() {
+  if (!supabase) {
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Missing Supabase environment variables');
+    }
+    supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+  }
+  return supabase;
+}
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -167,6 +177,7 @@ export function identifyCriticalLever(situationAnalysis) {
 // ═══════════════════════════════════════════════════════════════
 
 export async function generatePlan({ lever, situation, profile, whatWorks }) {
+  const supabaseClient = getSupabase();
   
   switch (lever.type) {
     

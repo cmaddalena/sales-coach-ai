@@ -24,17 +24,39 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'userId required' });
     }
     
+    console.log('[COACH] Starting for userId:', userId);
+    
     // ═══════════════════════════════════════════════════
     // PASO 1: CARGAR PERFIL COMPLETO 360°
     // ═══════════════════════════════════════════════════
     
+    console.log('[COACH] Loading profile...');
     const profile = await loadDeepProfile(userId);
+    console.log('[COACH] Profile loaded:', profile?.nombre);
+    
+    console.log('[COACH] Loading what works...');
     const whatWorks = await loadWhatWorks(userId);
+    console.log('[COACH] What works loaded, patterns:', whatWorks?.all?.length || 0);
+    
+    console.log('[COACH] Loading emotional state...');
     const emotionalState = await loadEmotionalState(userId);
+    console.log('[COACH] Emotional state:', emotionalState?.sentimiento);
+    
+    console.log('[COACH] Loading current context...');
     const currentContext = await loadCurrentContext(userId);
+    console.log('[COACH] Context loaded, momentum:', currentContext?.momentum);
+    
+    console.log('[COACH] Loading objetivos...');
     const objetivos = await loadObjetivos(userId);
+    console.log('[COACH] Objetivos loaded:', objetivos?.length || 0);
+    
+    console.log('[COACH] Loading leads...');
     const leads = await loadLeads(userId);
+    console.log('[COACH] Leads loaded:', leads?.length || 0);
+    
+    console.log('[COACH] Loading interactions...');
     const interactions = await loadRecentInteractions(userId, 30);
+    console.log('[COACH] Interactions loaded:', interactions?.length || 0);
     
     // ═══════════════════════════════════════════════════
     // PASO 2: ANÁLISIS SITUACIONAL PROFUNDO

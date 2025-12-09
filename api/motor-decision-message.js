@@ -9,8 +9,25 @@
 // Adapta tono según DISC, estado emocional y momentum
 // ═══════════════════════════════════════════════════════════════
 
+import { createClient } from '@supabase/supabase-js';
+
+let supabase;
+
+function getSupabase() {
+  if (!supabase) {
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Missing Supabase environment variables');
+    }
+    supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+  }
+  return supabase;
+}
+
 export function craftMessage({ plan, disc, emotionalState, momentum }) {
-  
+  const supabaseClient = getSupabase();
   const style = determineStyle(disc, emotionalState, momentum);
   
   // ═══════════════════════════════════════════════════════════
@@ -393,4 +410,4 @@ ${plan.plan_follow_up ?
 
 
 // Exportar función principal
-export { craftMessage, determineStyle };
+export { determineStyle };

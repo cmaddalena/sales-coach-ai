@@ -1,6 +1,7 @@
 {
   "name": "sales-coach-ai",
   "version": "1.0.0",
+  "type": "module",
   "description": "AI Sales Coach - Sistema comercial inteligente",
   "main": "index.js",
   "scripts": {

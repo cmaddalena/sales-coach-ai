@@ -10,8 +10,6 @@ export default async function handler(req, res) {
     return getContactos(req, res);
   } else if (req.method === 'POST') {
     return createContacto(req, res);
-  } else if (req.method === 'PUT') {
-    return updateContacto(req, res);
   } else if (req.method === 'DELETE') {
     return deleteContacto(req, res);
   }
@@ -21,27 +19,17 @@ export default async function handler(req, res) {
 
 async function getContactos(req, res) {
   try {
-    const { userId, temperatura, tipo } = req.query;
+    const { userId } = req.query;
     
     if (!userId) {
       return res.status(400).json({ error: 'userId is required' });
     }
     
-    let query = supabase
+    const { data, error } = await supabase
       .from('contactos')
       .select('*')
       .eq('user_id', userId)
       .order('ultima_interaccion', { ascending: false });
-    
-    if (temperatura) {
-      query = query.eq('temperatura', temperatura);
-    }
-    
-    if (tipo) {
-      query = query.eq('tipo', tipo);
-    }
-    
-    const { data, error } = await query;
     
     if (error) throw error;
     
@@ -60,8 +48,8 @@ async function createContacto(req, res) {
       return res.status(400).json({ error: 'user_id and nombre are required' });
     }
     
-    // Agregar fecha de creación / última interacción
-    contactoData.ultima_interaccion = new Date().toISOString();
+    contactoData.created_at = new Date().toISOString();
+    contactoData.updated_at = new Date().toISOString();
     
     const { data, error } = await supabase
       .from('contactos')
@@ -74,32 +62,6 @@ async function createContacto(req, res) {
     return res.status(201).json({ contacto: data });
   } catch (error) {
     console.error('Error creating contacto:', error);
-    return res.status(500).json({ error: error.message });
-  }
-}
-
-async function updateContacto(req, res) {
-  try {
-    const { id, ...updates } = req.body;
-    
-    if (!id) {
-      return res.status(400).json({ error: 'id is required' });
-    }
-    
-    updates.updated_at = new Date().toISOString();
-    
-    const { data, error } = await supabase
-      .from('contactos')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-    
-    if (error) throw error;
-    
-    return res.status(200).json({ contacto: data });
-  } catch (error) {
-    console.error('Error updating contacto:', error);
     return res.status(500).json({ error: error.message });
   }
 }

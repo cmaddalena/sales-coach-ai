@@ -598,29 +598,37 @@
   // FUNCIÓN: Actualizar sección "Tu Perfil"
   // ============================================================
   function updatePerfilSection() {
-    // Buscar el contenedor de Tu Perfil
-    const perfilSection = document.querySelector('[id*="perfil"]') || 
-                          document.querySelector('.perfil-container');
-    
-    if (!perfilSection) return;
-    
-    // Actualizar o crear elementos de perfil
-    const datos = [
-      { label: 'Nombre', value: userProfile.nombre || '-', key: 'nombre' },
-      { label: 'Negocio', value: userProfile.tipo_negocio || '-', key: 'negocio' },
-      { label: 'País', value: userProfile.pais || '-', key: 'pais' },
-      { label: 'Objetivo mensual', value: `$${(userProfile.objetivo_revenue_mensual || 0).toLocaleString()}`, key: 'objetivo' },
-      { label: 'Tiempo disponible', value: `${userProfile.horas_semana_ventas || 0}h/semana`, key: 'tiempo' }
-    ];
-    
-    datos.forEach(dato => {
-      let element = perfilSection.querySelector(`[data-profile="${dato.key}"]`);
-      if (element) {
-        element.textContent = dato.value;
-      }
-    });
+  // Actualizar nombre
+  const nombreEl = document.getElementById('perfil-nombre');
+  if (nombreEl) {
+    nombreEl.textContent = userProfile.nombre || '-';
   }
-
+  
+  // Actualizar negocio
+  const negocioEl = document.getElementById('perfil-negocio');
+  if (negocioEl) {
+    negocioEl.textContent = userProfile.tipo_negocio || '-';
+  }
+  
+  // Actualizar país
+  const paisEl = document.getElementById('perfil-pais');
+  if (paisEl) {
+    paisEl.textContent = userProfile.pais || '-';
+  }
+  
+  // Actualizar objetivo
+  const objetivoEl = document.getElementById('perfil-objetivo');
+  if (objetivoEl) {
+    const objetivo = userProfile.objetivo_revenue_mensual || 0;
+    objetivoEl.textContent = objetivo.toLocaleString();
+  }
+  
+  // Actualizar tiempo
+  const tiempoEl = document.getElementById('perfil-tiempo');
+  if (tiempoEl) {
+    tiempoEl.textContent = userProfile.horas_semana_ventas || 0;
+  }
+}
   // ============================================================
   // FUNCIÓN: Cargar contenido del dashboard según tab activa
   // ============================================================

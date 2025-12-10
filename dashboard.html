@@ -153,10 +153,114 @@
     
     <!-- TAB: Leads -->
     <div id="tab-leads" class="tab-content">
-      <div class="coming-soon">
-        <h2>👥 Gestión de Leads</h2>
-        <p>Próximamente: CRUD completo de contactos, temperatura, scoring automático.</p>
+      <!-- REPLACE: Tab Leads content (buscar y reemplazar el bloque mock actual) -->
+<div id="leads-tab-content" style="padding: 20px;">
+  
+  <!-- Header con filtros y botón agregar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+    
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <button onclick="filtrarLeads('todos')" id="filter-todos" class="filter-btn active" style="padding: 8px 16px; border: 2px solid #6366f1; background: #6366f1; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">
+        Todos
+      </button>
+      <button onclick="filtrarLeads('caliente')" id="filter-caliente" class="filter-btn" style="padding: 8px 16px; border: 2px solid #ef4444; background: white; color: #ef4444; border-radius: 8px; cursor: pointer; font-weight: 600;">
+        🔥 Calientes
+      </button>
+      <button onclick="filtrarLeads('tibio')" id="filter-tibio" class="filter-btn" style="padding: 8px 16px; border: 2px solid #f59e0b; background: white; color: #f59e0b; border-radius: 8px; cursor: pointer; font-weight: 600;">
+        🌡️ Tibios
+      </button>
+      <button onclick="filtrarLeads('frio')" id="filter-frio" class="filter-btn" style="padding: 8px 16px; border: 2px solid #3b82f6; background: white; color: #3b82f6; border-radius: 8px; cursor: pointer; font-weight: 600;">
+        ❄️ Fríos
+      </button>
+    </div>
+    
+    <button onclick="abrirModalAgregarLead()" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+      + Agregar Lead
+    </button>
+  </div>
+  
+  <!-- Listado de leads -->
+  <div id="leads-list-container" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; min-height: 300px;">
+    <p style="color: #666; text-align: center;">Cargando leads...</p>
+  </div>
+  
+</div>
+
+<!-- Modal para agregar lead -->
+<div id="modal-agregar-lead" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+  <div style="background: white; border-radius: 16px; padding: 30px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
+    <h2 style="margin-bottom: 20px; color: #333;">Agregar Nuevo Lead</h2>
+    
+    <form id="form-agregar-lead" onsubmit="guardarNuevoLead(event)" style="display: flex; flex-direction: column; gap: 15px;">
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Nombre *</label>
+        <input type="text" id="lead-nombre" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
       </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Empresa</label>
+        <input type="text" id="lead-empresa" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Teléfono</label>
+        <input type="tel" id="lead-telefono" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Email</label>
+        <input type="email" id="lead-email" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Temperatura *</label>
+        <select id="lead-temperatura" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+          <option value="caliente">🔥 Caliente</option>
+          <option value="tibio" selected>🌡️ Tibio</option>
+          <option value="frio">❄️ Frío</option>
+        </select>
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Tipo</label>
+        <select id="lead-tipo" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+          <option value="lead" selected>Lead</option>
+          <option value="cliente">Cliente</option>
+          <option value="partner">Partner</option>
+          <option value="contacto">Contacto</option>
+        </select>
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Notas</label>
+        <textarea id="lead-notas" rows="3" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical;"></textarea>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="submit" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+          Guardar
+        </button>
+        <button type="button" onclick="cerrarModalAgregarLead()" style="flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+          Cancelar
+        </button>
+      </div>
+      
+    </form>
+  </div>
+</div>
+
+<style>
+  .filter-btn.active {
+    background: #6366f1 !important;
+    color: white !important;
+  }
+  
+  .filter-btn:hover {
+    opacity: 0.8;
+  }
+</style>
+<!-- END REPLACE -->
     </div>
     
   </main>
@@ -515,6 +619,233 @@
     // Init
     init();
   </script>
+
+  <!-- APPEND: JavaScript for Leads management -->
+<script>
+  // ============================================================
+  // VARIABLES GLOBALES PARA LEADS
+  // ============================================================
+  let todosLosLeads = [];
+  let filtroActual = 'todos';
+
+  // ============================================================
+  // CARGAR LEADS DESDE API
+  // ============================================================
+  async function cargarLeads() {
+    try {
+      const userId = localStorage.getItem('userId');
+      
+      if (!userId) {
+        console.log('No userId found');
+        document.getElementById('leads-list-container').innerHTML = 
+          '<p style="color: #999; text-align: center;">No se pudo cargar el usuario</p>';
+        return;
+      }
+      
+      const response = await fetch(`/api/contactos?userId=${encodeURIComponent(userId)}`);
+      if (!response.ok) throw new Error('Error fetching contactos');
+      const { contactos } = await response.json();
+      
+      todosLosLeads = contactos || [];
+      mostrarLeads(todosLosLeads);
+      
+    } catch (error) {
+      console.error('Error cargando leads:', error);
+      const container = document.getElementById('leads-list-container');
+      if (container) {
+        container.innerHTML = 
+          '<p style="color: #ef4444; text-align: center;">Error cargando leads</p>';
+      }
+    }
+  }
+
+  // ============================================================
+  // MOSTRAR LEADS EN LA LISTA
+  // ============================================================
+  function mostrarLeads(leads) {
+    const container = document.getElementById('leads-list-container');
+    if (!container) return;
+    
+    if (!leads || leads.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <p style="font-size: 48px; margin-bottom: 10px;">📋</p>
+          <p style="color: #999; font-size: 18px;">No hay leads registrados</p>
+          <button onclick="abrirModalAgregarLead()" style="margin-top: 20px; padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            + Agregar tu primer lead
+          </button>
+        </div>
+      `;
+      return;
+    }
+    
+    const ahora = new Date();
+    
+    container.innerHTML = leads.map(lead => {
+      const diasSinContacto = lead.ultima_interaccion 
+        ? Math.floor((ahora - new Date(lead.ultima_interaccion)) / (1000 * 60 * 60 * 24))
+        : '∞';
+      
+      const colores = {
+        caliente: { border: '#ef4444', bg: '#fff8f8', emoji: '🔥' },
+        tibio: { border: '#f59e0b', bg: '#fffbf0', emoji: '🌡️' },
+        frio: { border: '#3b82f6', bg: '#f0f9ff', emoji: '❄️' }
+      };
+      
+      const color = colores[lead.temperatura] || colores.frio;
+      
+      return `
+        <div style="border-left: 4px solid ${color.border}; background: ${color.bg}; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 10px;">
+            
+            <div style="flex: 1; min-width: 200px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span style="font-size: 20px;">${color.emoji}</span>
+                <strong style="font-size: 18px; color: #333;">${lead.nombre}</strong>
+              </div>
+              
+              ${lead.empresa ? `<p style="color: #666; margin-bottom: 4px;">🏢 ${lead.empresa}</p>` : ''}
+              ${lead.telefono ? `<p style="color: #666; margin-bottom: 4px;">📞 ${lead.telefono}</p>` : ''}
+              ${lead.email ? `<p style="color: #666; margin-bottom: 4px;">📧 ${lead.email}</p>` : ''}
+              
+              <p style="color: #999; font-size: 14px; margin-top: 8px;">
+                Última interacción: ${diasSinContacto === '∞' ? 'Nunca' : `hace ${diasSinContacto} días`}
+              </p>
+              
+              ${lead.notas ? `<p style="color: #666; font-size: 14px; margin-top: 8px; font-style: italic;">"${lead.notas}"</p>` : ''}
+            </div>
+            
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button onclick="contactarLead('${lead.id}')" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">
+                📞 Contactar
+              </button>
+              <button onclick="eliminarLead('${lead.id}')" style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">
+                🗑️
+              </button>
+            </div>
+            
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============================================================
+  // FILTRAR LEADS
+  // ============================================================
+  function filtrarLeads(temperatura) {
+    filtroActual = temperatura;
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    const el = document.getElementById(`filter-${temperatura}`);
+    if (el) el.classList.add('active');
+    
+    if (temperatura === 'todos') {
+      mostrarLeads(todosLosLeads);
+    } else {
+      const leadsFiltrados = todosLosLeads.filter(lead => lead.temperatura === temperatura);
+      mostrarLeads(leadsFiltrados);
+    }
+  }
+
+  // ============================================================
+  // MODAL AGREGAR LEAD
+  // ============================================================
+  function abrirModalAgregarLead() {
+    const modal = document.getElementById('modal-agregar-lead');
+    if (modal) {
+      modal.style.display = 'flex';
+      const form = document.getElementById('form-agregar-lead');
+      if (form) form.reset();
+    }
+  }
+
+  function cerrarModalAgregarLead() {
+    const modal = document.getElementById('modal-agregar-lead');
+    if (modal) modal.style.display = 'none';
+  }
+
+  // ============================================================
+  // GUARDAR NUEVO LEAD
+  // ============================================================
+  async function guardarNuevoLead(event) {
+    event.preventDefault();
+    
+    const userId = localStorage.getItem('userId');
+    
+    if (!userId) {
+      alert('Error: No se pudo identificar el usuario');
+      return;
+    }
+    
+    const nuevoLead = {
+      user_id: userId,
+      nombre: document.getElementById('lead-nombre').value,
+      empresa: document.getElementById('lead-empresa').value || null,
+      telefono: document.getElementById('lead-telefono').value || null,
+      email: document.getElementById('lead-email').value || null,
+      temperatura: document.getElementById('lead-temperatura').value,
+      tipo: document.getElementById('lead-tipo').value,
+      notas: document.getElementById('lead-notas').value || null
+    };
+    
+    try {
+      const response = await fetch('/api/contactos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nuevoLead)
+      });
+      
+      if (!response.ok) throw new Error('Error al guardar');
+      
+      cerrarModalAgregarLead();
+      await cargarLeads();
+      alert('✅ Lead agregado exitosamente');
+      
+    } catch (error) {
+      console.error('Error guardando lead:', error);
+      alert('❌ Error al guardar el lead');
+    }
+  }
+
+  // ============================================================
+  // CONTACTAR LEAD
+  // ============================================================
+  function contactarLead(leadId) {
+    alert(`Contactar lead ${leadId}\n\nPróximamente:\n- Registrar llamada/email\n- Actualizar última interacción\n- Agregar nota de seguimiento`);
+  }
+
+  // ============================================================
+  // ELIMINAR LEAD
+  // ============================================================
+  async function eliminarLead(leadId) {
+    if (!confirm('¿Estás seguro de eliminar este lead?')) return;
+    
+    try {
+      const response = await fetch(`/api/contactos?id=${encodeURIComponent(leadId)}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) throw new Error('Error al eliminar');
+      
+      await cargarLeads();
+      alert('✅ Lead eliminado');
+      
+    } catch (error) {
+      console.error('Error eliminando lead:', error);
+      alert('❌ Error al eliminar el lead');
+    }
+  }
+
+  // ============================================================
+  // INICIALIZAR CUANDO SE MUESTRA LA TAB LEADS
+  // ============================================================
+  // Llamar cargarLeads() cuando se active la tab Leads en tu sistema de tabs.
+  // Si tienes una función showTab(tabId) agrega: if(tabId==='leads'){ cargarLeads(); }
+  // Si la tab Leads se muestra por defecto, invoca cargarLeads() aquí:
+  // cargarLeads();
+</script>
+<!-- END APPEND -->
 
 </body>
 </html>

@@ -463,46 +463,225 @@
   <!-- Scripts -->
   <script>
   // ============================================================
-  // VERIFICAR Y GUARDAR USERID AL CARGAR DASHBOARD
+  // INICIALIZACIÓN Y VARIABLES GLOBALES
   // ============================================================
-  async function inicializarUsuario() {
+  let supabase;
+  let currentUser = null;
+  let userProfile = null;
+
+  // ============================================================
+  // FUNCIÓN: Inicializar Supabase y verificar autenticación
+  // ============================================================
+  async function initDashboard() {
     try {
-      // Cargar Supabase si no está ya disponible
+      // Cargar Supabase
       if (!window.supabase) {
-        await new Promise((resolve, reject) => {
-          const s = document.createElement('script');
-          s.src = 'https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js';
-          s.onload = resolve;
-          s.onerror = reject;
-          document.head.appendChild(s);
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js';
+        await new Promise(resolve => {
+          script.onload = resolve;
+          document.head.appendChild(script);
         });
       }
-
+      
       const createClient = window.supabase.createClient;
-      const supabase = createClient(
-        window.SUPABASE_URL || 'https://vrauyvcwmgqlbqrnkngx.supabase.co',
-        window.SUPABASE_ANON_KEY || ''
+      supabase = createClient(
+        "https://vrauyvcwmgqlbqrnkngx.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyYXV5dmN3bWdxbGJxcm5rbmd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMTY5NTgsImV4cCI6MjA4MDU5Mjk1OH0.5RwraVx_nOWFrVfrT851q8SL475DuTvJS6Mep1GK8Rk"
       );
-
-      // Obtener usuario actual y guardar userId en localStorage
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user && user.id) {
-        localStorage.setItem('userId', user.id);
-        console.log('UserId guardado:', user.id);
-      } else {
-        console.error('No hay usuario logueado');
-        // Redirigir al login si no hay sesión
+      
+      // Verificar si hay usuario logueado
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error || !user) {
+        console.log('No hay usuario logueado, redirigiendo...');
         window.location.href = '/auth.html';
+        return;
       }
+      
+      currentUser = user;
+      localStorage.setItem('userId', user.id);
+      
+      // Cargar perfil del usuario
+      await loadUserProfile(user.id);
+      
+      // Cargar contenido del dashboard
+      loadDashboardContent();
+      
     } catch (error) {
-      console.error('Error inicializando usuario:', error);
-      // No romper la app: seguir sin userId pero avisar al usuario
+      console.error('Error inicializando dashboard:', error);
+      window.location.href = '/auth.html';
     }
   }
 
-  // Ejecutar inmediatamente antes de otras funciones
-  inicializarUsuario();
+  // ============================================================
+  // FUNCIÓN: Cargar perfil del usuario
+  // ============================================================
+  async function loadUserProfile(userId) {
+    try {
+      const response = await fetch(`/api/user-profile?userId=${userId}`);
+      const data = await response.json();
+      
+      if (data.profile) {
+        userProfile = data.profile;
+        displayUserProfile();
+      } else {
+        console.log('No se encontró perfil, redirigiendo a wizard...');
+        window.location.href = '/wizard.html';
+      }
+    } catch (error) {
+      console.error('Error cargando perfil:', error);
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Mostrar datos del perfil en el dashboard
+  // ============================================================
+  function displayUserProfile() {
+    if (!userProfile) return;
+    
+    // Actualizar saludo
+    const saludoElement = document.querySelector('h1, .greeting, [id*="saludo"]');
+    if (saludoElement) {
+      saludoElement.textContent = `Hola ${userProfile.nombre || 'Usuario'}! 👋`;
+    }
+    
+    // Actualizar descripción de negocio
+    const descripcionElement = document.querySelector('.tagline, .description, [id*="descripcion"]');
+    if (descripcionElement) {
+      descripcionElement.textContent = userProfile.tipo_negocio || 'Sistema comercial completo.';
+    }
+    
+    // Actualizar métricas del overview
+    updateMetricas();
+    
+    // Actualizar "Tu Perfil"
+    updatePerfilSection();
+  }
+
+  // ============================================================
+  // FUNCIÓN: Actualizar métricas del overview
+  // ============================================================
+  function updateMetricas() {
+    // Objetivo Mensual
+    const objetivoElement = document.getElementById('objetivo-mensual') || 
+                            document.querySelector('[data-metric="objetivo"]');
+    if (objetivoElement) {
+      const objetivo = userProfile.objetivo_revenue_mensual || 0;
+      objetivoElement.textContent = `$${objetivo.toLocaleString()}`;
+    }
+    
+    // Revenue Actual
+    const revenueElement = document.getElementById('revenue-actual') || 
+                           document.querySelector('[data-metric="revenue"]');
+    if (revenueElement) {
+      revenueElement.textContent = `$0`;
+    }
+    
+    // Tiempo Disponible
+    const tiempoElement = document.getElementById('tiempo-disponible') || 
+                          document.querySelector('[data-metric="tiempo"]');
+    if (tiempoElement) {
+      const horas = userProfile.horas_semana_ventas || 40;
+      tiempoElement.textContent = `${horas}h/sem`;
+    }
+    
+    // Leads Activos
+    const leadsElement = document.getElementById('leads-activos') || 
+                         document.querySelector('[data-metric="leads"]');
+    if (leadsElement) {
+      leadsElement.textContent = `0`;
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Actualizar sección "Tu Perfil"
+  // ============================================================
+  function updatePerfilSection() {
+    // Buscar el contenedor de Tu Perfil
+    const perfilSection = document.querySelector('[id*="perfil"]') || 
+                          document.querySelector('.perfil-container');
+    
+    if (!perfilSection) return;
+    
+    // Actualizar o crear elementos de perfil
+    const datos = [
+      { label: 'Nombre', value: userProfile.nombre || '-', key: 'nombre' },
+      { label: 'Negocio', value: userProfile.tipo_negocio || '-', key: 'negocio' },
+      { label: 'País', value: userProfile.pais || '-', key: 'pais' },
+      { label: 'Objetivo mensual', value: `$${(userProfile.objetivo_revenue_mensual || 0).toLocaleString()}`, key: 'objetivo' },
+      { label: 'Tiempo disponible', value: `${userProfile.horas_semana_ventas || 0}h/semana`, key: 'tiempo' }
+    ];
+    
+    datos.forEach(dato => {
+      let element = perfilSection.querySelector(`[data-profile="${dato.key}"]`);
+      if (element) {
+        element.textContent = dato.value;
+      }
+    });
+  }
+
+  // ============================================================
+  // FUNCIÓN: Cargar contenido del dashboard según tab activa
+  // ============================================================
+  function loadDashboardContent() {
+    // Si hay función cargarLeads y la tab Leads está activa, ejecutarla
+    const leadsTab = document.querySelector('[data-tab="leads"], #leads-tab, .tab-leads');
+    if (leadsTab && leadsTab.classList.contains('active') && typeof cargarLeads === 'function') {
+      cargarLeads();
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: getUserId (helper mejorado)
+  // ============================================================
+  function getUserId() {
+    // Prioridad 1: currentUser (ya verificado por autenticación)
+    if (currentUser) {
+      return currentUser.id;
+    }
+    
+    // Prioridad 2: localStorage directo
+    let userId = localStorage.getItem('userId');
+    if (userId) {
+      return userId;
+    }
+    
+    // Prioridad 3: sales_coach_state
+    const state = localStorage.getItem('sales_coach_state');
+    if (state) {
+      try {
+        const parsed = JSON.parse(state);
+        userId = parsed.user_id;
+        if (userId) return userId;
+      } catch (e) {
+        console.error('Error parsing sales_coach_state:', e);
+      }
+    }
+    
+    return null;
+  }
+
+  // ============================================================
+  // FUNCIÓN: Logout
+  // ============================================================
+  async function logout() {
+    try {
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+    
+    localStorage.clear();
+    window.location.href = '/index.html';
+  }
+
+  // ============================================================
+  // INICIALIZAR AL CARGAR LA PÁGINA
+  // ============================================================
+  window.addEventListener('DOMContentLoaded', initDashboard);
 
     let supabase;
     let currentUser;
@@ -673,7 +852,7 @@
   // ============================================================
   async function cargarLeads() {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       
       if (!userId) {
         console.log('No userId found');
@@ -811,7 +990,7 @@
   async function guardarNuevoLead(event) {
     event.preventDefault();
     
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     
     if (!userId) {
       alert('Error: No se pudo identificar el usuario');

@@ -266,6 +266,30 @@
   <script>
     let supabase;
 
+    // ============================================================
+    // FUNCIÓN HELPER: Obtener userId de diferentes fuentes
+    // ============================================================
+    function getUserId() {
+      // Opción 1: userId directo
+      let userId = localStorage.getItem('userId');
+
+      // Opción 2: Desde sales_coach_state (estructura alternativa)
+      if (!userId) {
+        const state = localStorage.getItem('sales_coach_state');
+        if (state) {
+          try {
+            const parsed = JSON.parse(state);
+            userId = parsed.user_id || parsed.userId || null;
+          } catch (e) {
+            console.error('Error parsing sales_coach_state:', e);
+          }
+        }
+      }
+
+      // Opción 3: fallback a null (la sesión de Supabase se maneja en la inicialización)
+      return userId;
+    }
+
     // Inicializar y verificar sesión automáticamente
     async function init() {
       const createClient = window.supabase.createClient;

@@ -1,0 +1,186 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- wizard.html -->
+<!-- Wizard de configuración inicial para nuevos usuarios -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wizard de Configuración - Sales Coach AI</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body data-user-id="{{userId}}">
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN: Bienvenida -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <section id="bienvenida">
+    <h1>¡Bienvenido a Sales Coach AI!</h1>
+    <p>Estamos aquí para ayudarte a alcanzar tus metas de ventas.</p>
+    <button id="start-wizard">Comenzar Wizard</button>
+    <button id="skip-to-dashboard" style="margin-top: 10px; background: #6366f1;">Ir a Dashboard</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN: Identificación de Usuario -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <section id="identificacion" class="hidden">
+    <h2>Identificación</h2>
+    <p>Por favor, cuéntanos sobre ti y tu negocio.</p>
+    
+    <!-- ...campos de formulario... -->
+
+    <button id="next-to-situation">Siguiente</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN: Análisis de Situación -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <section id="situacion" class="hidden">
+    <h2>Análisis de Situación</h2>
+    <p>Ayúdanos a entender tu situación actual.</p>
+    
+    <!-- ...campos de formulario... -->
+
+    <button id="next-to-review">Siguiente</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN: Revisión y Confirmación -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <section id="revision" class="hidden">
+    <h2>Revisión de Datos</h2>
+    <p>Por favor, revisa que toda la información sea correcta.</p>
+    
+    <!-- ...resumen de datos ingresados... -->
+
+    <button id="confirm-data">Confirmar y Crear Perfil</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN: Carga Inicial de Datos -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <section id="carga-datos" class="hidden">
+    <h2>Carga Inicial de Datos</h2>
+    <p>Estamos creando tu perfil y analizando tus datos.</p>
+    <div class="loader"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECCIÓN: Finalización -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <section id="finalizacion" class="hidden">
+    <h2>¡Listo!</h2>
+    <p>Tu perfil ha sido creado exitosamente. Ahora puedes acceder a todas las funcionalidades de Sales Coach AI.</p>
+    <button id="go-to-dashboard">Ir al Dashboard</button>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- FOOTER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <footer>
+    <p>&copy; 2023 Sales Coach AI. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SCRIPT: Manejo del Wizard -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <script>
+    // Lógica para manejar el flujo del wizard
+
+    document.getElementById('start-wizard').addEventListener('click', () => {
+      document.getElementById('bienvenida').classList.add('hidden');
+      document.getElementById('identificacion').classList.remove('hidden');
+    });
+
+    document.getElementById('next-to-situation').addEventListener('click', () => {
+      // Validar y guardar datos de identificación
+      // ...
+
+      document.getElementById('identificacion').classList.add('hidden');
+      document.getElementById('situacion').classList.remove('hidden');
+    });
+
+    document.getElementById('next-to-review').addEventListener('click', () => {
+      // Validar y guardar datos de situación
+      // ...
+
+      document.getElementById('situacion').classList.add('hidden');
+      document.getElementById('revision').classList.remove('hidden');
+    });
+
+    document.getElementById('confirm-data').addEventListener('click', async () => {
+      // Enviar datos al servidor y crear perfil
+      // ...
+
+      document.getElementById('revision').classList.add('hidden');
+      document.getElementById('carga-datos').classList.remove('hidden');
+
+      // Simular carga de datos
+      setTimeout(() => {
+        document.getElementById('carga-datos').classList.add('hidden');
+        document.getElementById('finalizacion').classList.remove('hidden');
+      }, 3000);
+    });
+
+    document.getElementById('go-to-dashboard').addEventListener('click', () => {
+      window.location.href = '/dashboard.html';
+    });
+
+    // Añadir botón para saltar al dashboard si ya tengo perfil
+    document.getElementById('skip-to-dashboard').addEventListener('click', async () => {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        // Si no tenemos userId, llevar a login
+        window.location.href = '/auth.html';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/user-profile?userId=${encodeURIComponent(userId)}`);
+        const json = await res.json();
+        const profile = json.profile;
+
+        const isProfileComplete = profile &&
+                                  profile.nombre &&
+                                  profile.tipo_negocio &&
+                                  profile.objetivo_revenue_mensual;
+
+        if (isProfileComplete) {
+          window.location.href = '/dashboard.html';
+        } else {
+          // Si no completo, permanecer o mostrar mensaje para continuar wizard
+          alert('No tienes perfil completo todavía. Continúa con el wizard o completa los datos para ir al dashboard.');
+        }
+      } catch (err) {
+        console.error('Error checking profile:', err);
+        alert('No se pudo verificar perfil. Intenta más tarde.');
+      }
+    });
+
+    async function getCurrentUserId() {
+      // Intenta varias fuentes: variable global, localStorage, data-attribute, query param
+      if (window.userId) return window.userId;
+      const ls = localStorage.getItem('userId');
+      if (ls) return ls;
+      const bodyUser = document.body?.dataset?.userId;
+      if (bodyUser) return bodyUser;
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('userId')) return params.get('userId');
+      return null;
+    }
+  </script>
+
+</body>
+</html>

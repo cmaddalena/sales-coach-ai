@@ -94,7 +94,7 @@
                 if (error) {
                     showError(error.message);
                 } else {
-                    window.location.href = '/';
+                    handleSuccessfulLogin(data.user.id);
                 }
             });
             
@@ -141,6 +141,30 @@
                     window.location.href = '/';
                 }
             });
+        }
+        
+        // Añadir esta función y llamar tras login exitoso: handleSuccessfulLogin(user.id)
+        async function handleSuccessfulLogin(userId) {
+          try {
+            const res = await fetch(`/api/user-profile?userId=${encodeURIComponent(userId)}`);
+            const json = await res.json();
+            const profile = json.profile;
+
+            const isProfileComplete = profile &&
+                                      profile.nombre &&
+                                      profile.tipo_negocio &&
+                                      profile.objetivo_revenue_mensual;
+
+            if (isProfileComplete) {
+              window.location.href = '/dashboard.html';
+            } else {
+              window.location.href = '/wizard.html';
+            }
+          } catch (err) {
+            console.error('Error checking profile:', err);
+            // por seguridad, llevar al wizard si no se puede verificar
+            window.location.href = '/wizard.html';
+          }
         }
     </script>
 </body>

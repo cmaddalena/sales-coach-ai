@@ -1,0 +1,38 @@
+warning: in the working copy of 'api/motor-decision-lever-plan.js', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/api/motor-decision-lever-plan.js b/api/motor-decision-lever-plan.js[m
+[1mindex c8b29e6..cdae2f8 100644[m
+[1m--- a/api/motor-decision-lever-plan.js[m
+[1m+++ b/api/motor-decision-lever-plan.js[m
+[36m@@ -5,10 +5,20 @@[m
+ [m
+ import { createClient } from '@supabase/supabase-js';[m
+ [m
+[31m-const supabase = createClient([m
+[31m-  process.env.SUPABASE_URL,[m
+[31m-  process.env.SUPABASE_SERVICE_ROLE_KEY[m
+[31m-);[m
+[32m+[m[32mlet supabase;[m
+[32m+[m
+[32m+[m[32mfunction getSupabase() {[m
+[32m+[m[32m  if (!supabase) {[m
+[32m+[m[32m    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {[m
+[32m+[m[32m      throw new Error('Missing Supabase environment variables');[m
+[32m+[m[32m    }[m
+[32m+[m[32m    supabase = createClient([m
+[32m+[m[32m      process.env.SUPABASE_URL,[m
+[32m+[m[32m      process.env.SUPABASE_SERVICE_ROLE_KEY[m
+[32m+[m[32m    );[m
+[32m+[m[32m  }[m
+[32m+[m[32m  return supabase;[m
+[32m+[m[32m}[m
+ [m
+ [m
+ // ═══════════════════════════════════════════════════════════════[m
+[36m@@ -167,6 +177,7 @@[m [mexport function identifyCriticalLever(situationAnalysis) {[m
+ // ═══════════════════════════════════════════════════════════════[m
+ [m
+ export async function generatePlan({ lever, situation, profile, whatWorks }) {[m
+[32m+[m[32m  const supabaseClient = getSupabase();[m
+   [m
+   switch (lever.type) {[m
+     [m

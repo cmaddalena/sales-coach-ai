@@ -1,11 +1,9 @@
 ﻿<!DOCTYPE html>
-<html lang="es">
+<html lang="es-AR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sales Coach AI</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <title>Sales Coach AI - Tu Coach de Ventas Personalizado</title>
   
   <!-- Supabase Config -->
   <script>
@@ -13,72 +11,328 @@
     window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyYXV5dmN3bWdxbGJxcm5rbmd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMTY5NTgsImV4cCI6MjA4MDU5Mjk1OH0.5RwraVx_nOWFrVfrT851q8SL475DuTvJS6Mep1GK8Rk";
   </script>
   
-    <!-- Auth Check -->
-<script>
-  const script = document.createElement('script');
-  script.src = 'https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js';
-  script.onload = function() {
-    const createClient = window.supabase.createClient;
-    const supabase = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-    
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        window.location.href = '/auth.html';
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 90%;
+      text-align: center;
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+      font-size: 48px;
+      color: white;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .tagline {
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .cta-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 16px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .features {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .features h2 {
+      color: #667eea;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      text-align: left;
+    }
+
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    .feature h3 {
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .feature p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .loader {
+      display: none;
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 36px;
       }
-    });
-  };
-  document.head.appendChild(script);
-  </script>
+
+      .tagline {
+        font-size: 18px;
+      }
+
+      .cta-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .features {
+        padding: 30px 20px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  
-  <div id="wizard-container" class="container">
-    <div id="wizard-content">
-      <h1>🤖 Sales Coach AI</h1>
-      <p>Voy a ayudarte a armar tu sistema comercial completo.</p>
-      <p>15-20 minutos.</p>
-      <button class="btn-primary" onclick="Wizard.start()">Empezar</button>
-      <button class="btn-secondary" onclick="App.ofrecerRestaurar()">Restaurar desde Excel</button>
-    </div>
-  </div>
-  
-  <div id="chat-container" class="container hidden">
-    <div id="chat-header">
-      <h2>Sales Coach AI</h2>
-      <div class="stats-bar">
-        <div class="stat">
-          <span class="label">Semana</span>
-          <span class="value" id="stat-semana">0/20</span>
-        </div>
-        <div class="stat">
-          <span class="label">Demos</span>
-          <span class="value" id="stat-demos">0/3</span>
-        </div>
-        <div class="stat">
-          <span class="label">Revenue</span>
-          <span class="value" id="stat-revenue">$0</span>
+  <div class="container">
+    <div class="logo">🤖</div>
+    <h1>Sales Coach AI</h1>
+    <p class="tagline">
+      Tu coach de ventas personalizado con IA.<br>
+      Optimiza tu pipeline, maximiza tus resultados.
+    </p>
+
+    <div class="loader" id="loader"></div>
+
+    <div id="main-content">
+      <div class="cta-container">
+        <button class="btn btn-primary" onclick="goToLogin()">
+          Ingresar
+        </button>
+        <button class="btn btn-secondary" onclick="goToSignup()">
+          Crear Cuenta
+        </button>
+      </div>
+
+      <div class="features">
+        <h2>¿Qué hace Sales Coach AI por vos?</h2>
+        <div class="features-grid">
+          <div class="feature">
+            <div class="feature-icon">🎯</div>
+            <div>
+              <h3>Pipeline Inteligente</h3>
+              <p>Gestión completa de leads con priorización automática según tu contexto.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon">📊</div>
+            <div>
+              <h3>Análisis en Tiempo Real</h3>
+              <p>Dashboard que muestra tu situación comercial y te sugiere acciones concretas.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon">⚡</div>
+            <div>
+              <h3>Acciones Personalizadas</h3>
+              <p>Recomendaciones diarias basadas en tu energía, momentum y objetivos.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon">🧠</div>
+            <div>
+              <h3>Coach 24/7</h3>
+              <p>IA conversacional que entiende tu negocio y te asesora en cada decisión.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    
-    <div id="messages"></div>
-    
-    <div id="input-container">
-      <textarea id="user-input" placeholder="Escribe aquí..." rows="2"></textarea>
-      <button id="send-btn" onclick="Chat.send()">Enviar</button>
-    </div>
   </div>
-  
-  <div id="loading" class="hidden">
-    <div class="spinner"></div>
-    <p id="loading-text">Procesando...</p>
-  </div>
-  
-  <script src="js/utils.js"></script>
-  <script src="js/excel-handler.js"></script>
-  <script src="js/wizard.js"></script>
-  <script src="js/chat.js"></script>
-  <script src="js/app.js"></script>
-  
+
+  <!-- Cargar Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+
+  <script>
+    let supabase;
+
+    // Inicializar y verificar sesión automáticamente
+    async function init() {
+      const createClient = window.supabase.createClient;
+      supabase = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+
+      // Mostrar loader
+      document.getElementById('loader').classList.add('active');
+      document.getElementById('main-content').style.display = 'none';
+
+      // Verificar si ya hay sesión activa
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+          // Usuario logueado - verificar perfil y redirigir
+          await handleExistingSession(user.id);
+        } else {
+          // No hay sesión - mostrar pantalla de inicio
+          showLandingPage();
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+        showLandingPage();
+      }
+    }
+
+    async function handleExistingSession(userId) {
+      try {
+        // Verificar si tiene perfil completo
+        const res = await fetch(`/api/user-profile?userId=${encodeURIComponent(userId)}`);
+        const json = await res.json();
+        const profile = json.profile;
+
+        const isProfileComplete = profile &&
+                                  profile.nombre &&
+                                  profile.tipo_negocio &&
+                                  profile.objetivo_revenue_mensual;
+
+        if (isProfileComplete) {
+          // Perfil completo → Dashboard
+          window.location.href = '/dashboard.html';
+        } else {
+          // Perfil incompleto → Wizard
+          window.location.href = '/wizard.html';
+        }
+      } catch (error) {
+        console.error('Error checking profile:', error);
+        // Si hay error, llevar al dashboard por defecto
+        window.location.href = '/dashboard.html';
+      }
+    }
+
+    function showLandingPage() {
+      document.getElementById('loader').classList.remove('active');
+      document.getElementById('main-content').style.display = 'block';
+    }
+
+    function goToLogin() {
+      window.location.href = '/auth.html';
+    }
+
+    function goToSignup() {
+      window.location.href = '/auth.html#signup';
+    }
+
+    // Iniciar cuando carga la página
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>

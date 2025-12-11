@@ -30,7 +30,8 @@
     <div class="tabs">
       <button class="tab active" onclick="showTab('overview')">📊 Overview</button>
       <button class="tab" onclick="showTab('coach')">🧠 Tu Coach</button>
-      <button class="tab" onclick="showTab('leads')">👥 Leads</button>
+      <button class="tab" onclick="showTab('leads')">👥 Contactos</button>
+      <button class="tab" onclick="showTab('perfil')">⚙️ Mi Perfil</button>
     </div>
     
     <!-- TAB: Overview -->
@@ -263,6 +264,152 @@
 <!-- END REPLACE -->
     </div>
     
+    <!-- TAB: Mi Perfil -->
+    <div id="tab-perfil" class="tab-content">
+      <div class="perfil-container">
+        
+        <!-- Sidebar de navegación -->
+        <div class="perfil-sidebar">
+          <h3 style="padding: 20px; margin: 0; color: #667eea;">Mi Perfil</h3>
+          
+          <div class="perfil-nav">
+            <button class="perfil-nav-item active" onclick="showPerfilSection('persona')">
+              👤 Persona
+            </button>
+            <button class="perfil-nav-item" onclick="showPerfilSection('negocio')">
+              💼 Negocio
+            </button>
+            <button class="perfil-nav-item" onclick="showPerfilSection('timeline')">
+              📊 Mi Evolución
+            </button>
+          </div>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="perfil-content">
+          
+          <!-- SECCIÓN: PERSONA -->
+          <div id="perfil-persona" class="perfil-section active">
+            <h2>👤 Persona</h2>
+            <p style="color: #666; margin-bottom: 30px;">
+              Ayudanos a conocerte mejor para darte recomendaciones más personalizadas.
+            </p>
+            
+            <!-- Subsección: Identidad -->
+            <div class="perfil-card">
+              <h3>Identidad & Background</h3>
+              <div class="form-grid">
+                <div>
+                  <label>Nombre</label>
+                  <input type="text" id="persona-nombre" value="" disabled style="background: #f5f5f5;">
+                </div>
+                <div>
+                  <label>Edad</label>
+                  <input type="number" id="persona-edad" placeholder="Ej: 31">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>Background Profesional</label>
+                  <textarea id="persona-background" rows="3" placeholder="Ej: Ingeniero en sistemas con 12 años de experiencia, ahora emprendedor..."></textarea>
+                </div>
+                <div>
+                  <label>Situación Familiar</label>
+                  <input type="text" id="persona-situacion-familiar" placeholder="Ej: Casado, 2 hijos">
+                </div>
+                <div>
+                  <label>Presión Financiera</label>
+                  <select id="persona-presion-financiera">
+                    <option value="">Seleccionar...</option>
+                    <option value="baja">Baja</option>
+                    <option value="media">Media</option>
+                    <option value="alta">Alta</option>
+                  </select>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>Otros Compromisos</label>
+                  <input type="text" id="persona-otros-compromisos" placeholder="Ej: Podcast semanal, mentor en startup...">
+                </div>
+              </div>
+            </div>
+            
+            <!-- Subsección: Visión -->
+            <div class="perfil-card">
+              <h3>Visión & Propósito</h3>
+              <div class="form-grid">
+                <div style="grid-column: 1 / -1;">
+                  <label>Visión a 1 año</label>
+                  <textarea id="persona-vision-1" rows="2" placeholder="¿Dónde te ves en 1 año?"></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>Visión a 3 años</label>
+                  <textarea id="persona-vision-3" rows="2" placeholder="¿Dónde te ves en 3 años?"></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>Visión a 5 años</label>
+                  <textarea id="persona-vision-5" rows="2" placeholder="¿Dónde te ves en 5 años?"></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>Tu Propósito (¿Por qué hacés lo que hacés?)</label>
+                  <textarea id="persona-proposito" rows="2" placeholder="Ej: Ayudar a emprendedores a escalar sus negocios con IA..."></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>Definición de Éxito Personal</label>
+                  <textarea id="persona-exito" rows="2" placeholder="¿Qué significa éxito para vos?"></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Subsección: FODA -->
+            <div class="perfil-card">
+              <h3>FODA Personal</h3>
+              <div class="form-grid">
+                <div style="grid-column: 1 / -1;">
+                  <label>💪 Fortalezas (una por línea)</label>
+                  <textarea id="persona-fortalezas" rows="4" placeholder="Ej:&#10;Experiencia técnica profunda&#10;Red de contactos en LatAm&#10;Comunicación clara"></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>🚀 Oportunidades (una por línea)</label>
+                  <textarea id="persona-oportunidades" rows="4" placeholder="Ej:&#10;Mercado de IA en crecimiento&#10;Alianzas con agencias&#10;Expansión a otros países"></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>⚠️ Debilidades (una por línea)</label>
+                  <textarea id="persona-debilidades" rows="4" placeholder="Ej:&#10;Impaciencia con procesos lentos&#10;Falta de equipo comercial&#10;Poca visibilidad online"></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label>🛑 Amenazas (una por línea)</label>
+                  <textarea id="persona-amenazas" rows="4" placeholder="Ej:&#10;Competidores con más capital&#10;Cambios regulatorios IA&#10;Saturación de mercado"></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <button onclick="guardarPersona()" class="btn-save">
+              💾 Guardar Cambios
+            </button>
+          </div>
+          
+          <!-- SECCIÓN: NEGOCIO -->
+          <div id="perfil-negocio" class="perfil-section">
+            <h2>💼 Negocio</h2>
+            <p style="color: #666; margin-bottom: 30px;">
+              Configuración en desarrollo... Próximamente: Gestión de Servicios, ICPs, Objetivos.
+            </p>
+          </div>
+          
+          <!-- SECCIÓN: TIMELINE -->
+          <div id="perfil-timeline" class="perfil-section">
+            <h2>📊 Mi Evolución</h2>
+            <p style="color: #666; margin-bottom: 30px;">
+              Timeline de cambios en desarrollo...
+            </p>
+            <div id="timeline-container">
+              <p style="text-align: center; color: #999;">Cargando historial...</p>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+    
   </main>
 
   <!-- Styles -->
@@ -458,6 +605,159 @@
     }
     
     .coming-soon h2 { margin-bottom: 20px; }
+    
+    /* ============================================================
+       ESTILOS: MI PERFIL
+       ============================================================ */
+
+    .perfil-container {
+      display: flex;
+      gap: 20px;
+      min-height: 600px;
+    }
+
+    .perfil-sidebar {
+      width: 250px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .perfil-nav {
+      padding: 10px;
+    }
+
+    .perfil-nav-item {
+      width: 100%;
+      text-align: left;
+      padding: 15px 20px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.3s;
+      margin-bottom: 5px;
+    }
+
+    .perfil-nav-item:hover {
+      background: #f5f5f5;
+      color: #667eea;
+    }
+
+    .perfil-nav-item.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .perfil-content {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 40px;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+
+    .perfil-section {
+      display: none;
+    }
+
+    .perfil-section.active {
+      display: block;
+    }
+
+    .perfil-card {
+      background: #f9f9f9;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      border: 1px solid #e5e5e5;
+    }
+
+    .perfil-card h3 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .form-grid label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .form-grid input,
+    .form-grid select,
+    .form-grid textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    .form-grid input:focus,
+    .form-grid select:focus,
+    .form-grid textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      transition: transform 0.3s;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .perfil-container {
+        flex-direction: column;
+      }
+      
+      .perfil-sidebar {
+        width: 100%;
+      }
+      
+      .perfil-nav {
+        display: flex;
+        overflow-x: auto;
+      }
+      
+      .perfil-nav-item {
+        white-space: nowrap;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 
   <!-- Scripts -->
@@ -962,6 +1262,169 @@
   // Si tienes una función showTab(tabId) agrega: if(tabId==='leads'){ cargarLeads(); }
   // Si la tab Leads se muestra por defecto, invoca cargarLeads() aquí:
   // cargarLeads();
+</script>
+<!-- END APPEND -->
+
+  <!-- APPEND: JavaScript for Mi Perfil -->
+<script>
+  // ============================================================
+  // CAMBIAR NOMBRE A CONTACTOS
+  // ============================================================
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.textContent.includes('Leads')) {
+      t.innerHTML = t.innerHTML.replace('Leads', 'Contactos');
+    }
+  });
+  
+  // ============================================================
+  // FUNCIÓN: Cambiar sección dentro de Mi Perfil
+  // ============================================================
+  function showPerfilSection(sectionName) {
+    // Ocultar todas las secciones
+    document.querySelectorAll('.perfil-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.perfil-nav-item').forEach(n => n.classList.remove('active'));
+    
+    // Mostrar sección seleccionada
+    const section = document.getElementById(`perfil-${sectionName}`);
+    if (section) {
+      section.classList.add('active');
+    }
+    
+    // Activar botón de navegación
+    if (event && event.target) {
+      event.target.classList.add('active');
+    }
+    
+    // Cargar datos según sección
+    if (sectionName === 'persona') {
+      cargarDatosPersona();
+    } else if (sectionName === 'timeline') {
+      cargarTimeline();
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Cargar datos de persona desde userProfile
+  // ============================================================
+  function cargarDatosPersona() {
+    if (!userProfile) return;
+    
+    // Identidad
+    if (userProfile.nombre) document.getElementById('persona-nombre').value = userProfile.nombre;
+    if (userProfile.edad) document.getElementById('persona-edad').value = userProfile.edad;
+    if (userProfile.background) document.getElementById('persona-background').value = userProfile.background;
+    if (userProfile.situacion_familiar) document.getElementById('persona-situacion-familiar').value = userProfile.situacion_familiar;
+    if (userProfile.presion_financiera) document.getElementById('persona-presion-financiera').value = userProfile.presion_financiera;
+    if (userProfile.otros_compromisos) document.getElementById('persona-otros-compromisos').value = userProfile.otros_compromisos;
+    
+    // Visión
+    if (userProfile.vision_1_year) document.getElementById('persona-vision-1').value = userProfile.vision_1_year;
+    if (userProfile.vision_3_years) document.getElementById('persona-vision-3').value = userProfile.vision_3_years;
+    if (userProfile.vision_5_years) document.getElementById('persona-vision-5').value = userProfile.vision_5_years;
+    if (userProfile.proposito) document.getElementById('persona-proposito').value = userProfile.proposito;
+    if (userProfile.definicion_exito) document.getElementById('persona-exito').value = userProfile.definicion_exito;
+    
+    // FODA
+    if (userProfile.foda) {
+      if (userProfile.foda.fortalezas) {
+        document.getElementById('persona-fortalezas').value = userProfile.foda.fortalezas.join('\n');
+      }
+      if (userProfile.foda.oportunidades) {
+        document.getElementById('persona-oportunidades').value = userProfile.foda.oportunidades.join('\n');
+      }
+      if (userProfile.foda.debilidades) {
+        document.getElementById('persona-debilidades').value = userProfile.foda.debilidades.join('\n');
+      }
+      if (userProfile.foda.amenazas) {
+        document.getElementById('persona-amenazas').value = userProfile.foda.amenazas.join('\n');
+      }
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Guardar cambios de persona
+  // ============================================================
+  async function guardarPersona() {
+    const userId = getUserId();
+    if (!userId) {
+      alert('Error: No se pudo identificar el usuario');
+      return;
+    }
+    
+    // Recopilar datos del formulario
+    const datosPersona = {
+      edad: parseInt(document.getElementById('persona-edad').value) || null,
+      background: document.getElementById('persona-background').value || null,
+      situacion_familiar: document.getElementById('persona-situacion-familiar').value || null,
+      presion_financiera: document.getElementById('persona-presion-financiera').value || null,
+      otros_compromisos: document.getElementById('persona-otros-compromisos').value || null,
+      
+      vision_1_year: document.getElementById('persona-vision-1').value || null,
+      vision_3_years: document.getElementById('persona-vision-3').value || null,
+      vision_5_years: document.getElementById('persona-vision-5').value || null,
+      proposito: document.getElementById('persona-proposito').value || null,
+      definicion_exito: document.getElementById('persona-exito').value || null,
+      
+      foda: {
+        fortalezas: document.getElementById('persona-fortalezas').value.split('\n').filter(l => l.trim()),
+        oportunidades: document.getElementById('persona-oportunidades').value.split('\n').filter(l => l.trim()),
+        debilidades: document.getElementById('persona-debilidades').value.split('\n').filter(l => l.trim()),
+        amenazas: document.getElementById('persona-amenazas').value.split('\n').filter(l => l.trim())
+      }
+    };
+    
+    try {
+      const response = await fetch('/api/user-profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, updates: datosPersona })
+      });
+      
+      if (!response.ok) throw new Error('Error al guardar');
+      
+      // Actualizar userProfile en memoria
+      userProfile = { ...userProfile, ...datosPersona };
+      
+      alert('✅ Cambios guardados exitosamente');
+      
+    } catch (error) {
+      console.error('Error guardando persona:', error);
+      alert('❌ Error al guardar cambios');
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Cargar timeline de cambios
+  // ============================================================
+  async function cargarTimeline() {
+    const userId = getUserId();
+    if (!userId) return;
+    
+    const container = document.getElementById('timeline-container');
+    container.innerHTML = '<p style="text-align: center; color: #999;">Cargando historial...</p>';
+    
+    try {
+      // TODO: Crear endpoint /api/profile-timeline
+      container.innerHTML = '<p style="text-align: center; color: #999;">Timeline próximamente...</p>';
+    } catch (error) {
+      console.error('Error cargando timeline:', error);
+      container.innerHTML = '<p style="text-align: center; color: #ef4444;">Error cargando historial</p>';
+    }
+  }
+
+  // ============================================================
+  // INICIALIZAR AL CARGAR LA PÁGINA
+  // ============================================================
+  window.addEventListener('DOMContentLoaded', () => {
+    initDashboard();
+    
+    // Forzar carga de perfil al iniciar
+    setTimeout(() => {
+      if (currentUser) {
+        loadUserProfile(currentUser.id);
+      }
+    }, 1000);
+  });
 </script>
 <!-- END APPEND -->
 

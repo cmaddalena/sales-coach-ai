@@ -251,489 +251,542 @@
   </div>
 </div>
 
+<!-- Modal para agregar/editar servicio -->
+<div id="modal-servicio" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+  <div style="background: white; border-radius: 16px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+    <h2 id="modal-servicio-title" style="margin-bottom: 20px; color: #333;">Agregar Servicio</h2>
+    
+    <form id="form-servicio" onsubmit="guardarServicio(event)" style="display: flex; flex-direction: column; gap: 15px;">
+      
+      <input type="hidden" id="servicio-id" value="">
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Nombre del Servicio *</label>
+        <input type="text" id="servicio-nombre" required placeholder="Ej: Consultoría Comercial" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+      </div>
+      
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Descripción</label>
+        <textarea id="servicio-descripcion" rows="3" placeholder="Describe qué incluye este servicio..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical;"></textarea>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Categoría *</label>
+          <select id="servicio-categoria" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="">Seleccionar...</option>
+            <option value="consultoría">Consultoría</option>
+            <option value="taller">Taller/Workshop</option>
+            <option value="producto">Producto</option>
+            <option value="agente_ia">Agente IA</option>
+            <option value="implementación">Implementación</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Precio Base ($)</label>
+          <input type="number" id="servicio-precio-base" placeholder="1500" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Precio Mínimo ($)</label>
+          <input type="number" id="servicio-precio-minimo" placeholder="1000" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+        </div>
+        
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Precio Máximo ($)</label>
+          <input type="number" id="servicio-precio-maximo" placeholder="2000" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Duración</label>
+          <input type="text" id="servicio-duracion" placeholder="Ej: 3 meses, 4 horas" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+        </div>
+        
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Tipo Facturación</label>
+          <select id="servicio-tipo-facturacion" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="">Seleccionar...</option>
+            <option value="one-time">Pago único</option>
+            <option value="mensual">Mensual</option>
+            <option value="anual">Anual</option>
+            <option value="por-proyecto">Por proyecto</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="submit" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+          Guardar
+        </button>
+        <button type="button" onclick="cerrarModalServicio()" style="flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+          Cancelar
+        </button>
+      </div>
+      
+    </form>
+  </div>
+</div>
+
 <style>
-  .filter-btn.active {
-    background: #6366f1 !important;
-    color: white !important;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+  
+  .dashboard-header {
+    background: white;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
   
-  .filter-btn:hover {
-    opacity: 0.8;
+  .logo { font-size: 24px; font-weight: bold; }
+  
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
-</style>
-<!-- END REPLACE -->
-    </div>
-    
-    <!-- TAB: Mi Perfil -->
-    <div id="tab-perfil" class="tab-content">
-      <div class="perfil-container">
-        
-        <!-- Sidebar de navegación -->
-        <div class="perfil-sidebar">
-          <h3 style="padding: 20px; margin: 0; color: #667eea;">Mi Perfil</h3>
-          
-          <div class="perfil-nav">
-            <button class="perfil-nav-item active" onclick="showPerfilSection('persona')">
-              👤 Persona
-            </button>
-            <button class="perfil-nav-item" onclick="showPerfilSection('negocio')">
-              💼 Negocio
-            </button>
-            <button class="perfil-nav-item" onclick="showPerfilSection('timeline')">
-              📊 Mi Evolución
-            </button>
-          </div>
-        </div>
-        
-        <!-- Contenido principal -->
-        <div class="perfil-content">
-          
-          <!-- SECCIÓN: PERSONA -->
-          <div id="perfil-persona" class="perfil-section active">
-            <h2>👤 Persona</h2>
-            <p style="color: #666; margin-bottom: 30px;">
-              Ayudanos a conocerte mejor para darte recomendaciones más personalizadas.
-            </p>
-            
-            <!-- Subsección: Identidad -->
-            <div class="perfil-card">
-              <h3>Identidad & Background</h3>
-              <div class="form-grid">
-                <div>
-                  <label>Nombre</label>
-                  <input type="text" id="persona-nombre" value="" placeholder="Tu nombre">
-                </div>
-                <div>
-                  <label>Edad</label>
-                  <input type="number" id="persona-edad" placeholder="Ej: 31">
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>Background Profesional</label>
-                  <textarea id="persona-background" rows="3" placeholder="Ej: Ingeniero en sistemas con 12 años de experiencia, ahora emprendedor..."></textarea>
-                </div>
-                <div>
-                  <label>Situación Familiar</label>
-                  <input type="text" id="persona-situacion-familiar" placeholder="Ej: Casado, 2 hijos">
-                </div>
-                <div>
-                  <label>Presión Financiera</label>
-                  <select id="persona-presion-financiera">
-                    <option value="">Seleccionar...</option>
-                    <option value="baja">Baja</option>
-                    <option value="media">Media</option>
-                    <option value="alta">Alta</option>
-                  </select>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>Otros Compromisos</label>
-                  <input type="text" id="persona-otros-compromisos" placeholder="Ej: Podcast semanal, mentor en startup...">
-                </div>
-              </div>
-            </div>
-            
-            <!-- Subsección: Visión -->
-            <div class="perfil-card">
-              <h3>Visión & Propósito</h3>
-              <div class="form-grid">
-                <div style="grid-column: 1 / -1;">
-                  <label>Visión a 1 año</label>
-                  <textarea id="persona-vision-1" rows="2" placeholder="¿Dónde te ves en 1 año?"></textarea>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>Visión a 3 años</label>
-                  <textarea id="persona-vision-3" rows="2" placeholder="¿Dónde te ves en 3 años?"></textarea>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>Visión a 5 años</label>
-                  <textarea id="persona-vision-5" rows="2" placeholder="¿Dónde te ves en 5 años?"></textarea>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>Tu Propósito (¿Por qué hacés lo que hacés?)</label>
-                  <textarea id="persona-proposito" rows="2" placeholder="Ej: Ayudar a emprendedores a escalar sus negocios con IA..."></textarea>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>Definición de Éxito Personal</label>
-                  <textarea id="persona-exito" rows="2" placeholder="¿Qué significa éxito para vos?"></textarea>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Subsección: FODA -->
-            <div class="perfil-card">
-              <h3>FODA Personal</h3>
-              <div class="form-grid">
-                <div style="grid-column: 1 / -1;">
-                  <label>💪 Fortalezas (una por línea)</label>
-                  <textarea id="persona-fortalezas" rows="4" placeholder="Ej:&#10;Experiencia técnica profunda&#10;Red de contactos en LatAm&#10;Comunicación clara"></textarea>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>🚀 Oportunidades (una por línea)</label>
-                  <textarea id="persona-oportunidades" rows="4" placeholder="Ej:&#10;Mercado de IA en crecimiento&#10;Alianzas con agencias&#10;Expansión a otros países"></textarea>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>⚠️ Debilidades (una por línea)</label>
-                  <textarea id="persona-debilidades" rows="4" placeholder="Ej:&#10;Impaciencia con procesos lentos&#10;Falta de equipo comercial&#10;Poca visibilidad online"></textarea>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label>🛑 Amenazas (una por línea)</label>
-                  <textarea id="persona-amenazas" rows="4" placeholder="Ej:&#10;Competidores con más capital&#10;Cambios regulatorios IA&#10;Saturación de mercado"></textarea>
-                </div>
-              </div>
-            </div>
-            
-            <button onclick="guardarPersona()" class="btn-save">
-              💾 Guardar Cambios
-            </button>
-          </div>
-          
-          <!-- SECCIÓN: NEGOCIO -->
-          <div id="perfil-negocio" class="perfil-section">
-            <h2>💼 Negocio</h2>
-            <p style="color: #666; margin-bottom: 30px;">
-              Configuración en desarrollo... Próximamente: Gestión de Servicios, ICPs, Objetivos.
-            </p>
-          </div>
-          
-          <!-- SECCIÓN: TIMELINE -->
-          <div id="perfil-timeline" class="perfil-section">
-            <h2>📊 Mi Evolución</h2>
-            <p style="color: #666; margin-bottom: 30px;">
-              Timeline de cambios en desarrollo...
-            </p>
-            <div id="timeline-container">
-              <p style="text-align: center; color: #999;">Cargando historial...</p>
-            </div>
-          </div>
-          
-        </div>
-        
-      </div>
-    </div>
-    
-  </main>
+  
+  #logout-btn {
+    background: #f0f0f0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .dashboard-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+  
+  .welcome-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+  }
+  
+  .welcome-card h1 { margin-bottom: 10px; }
+  
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    background: white;
+    padding: 10px;
+    border-radius: 12px;
+  }
+  
+  .tab {
+    flex: 1;
+    padding: 15px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .tab:hover { background: #f0f0f0; }
+  .tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .stat-card h3 {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #667eea;
+  }
+  
+  /* Action Cards */
+  .action-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .action-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .action-card h3 { margin-bottom: 15px; }
+  .action-card ul { padding-left: 20px; margin-top: 10px; }
+  .action-card li { margin: 8px 0; }
+  
+  /* Coach Styles */
+  .coach-motivacion {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .quote-icon { font-size: 48px; margin-bottom: 15px; }
+  .frase { font-size: 20px; line-height: 1.6; font-style: italic; }
+  
+  .coach-estado, .coach-situacion, .coach-plan, .coach-panico {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  
+  .estado-grid { display: grid; gap: 20px; margin-bottom: 20px; }
+  .estado-item label { display: block; font-size: 14px; color: #666; margin-bottom: 8px; }
+  
+  .progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+  }
+  
+  .btn-secondary, .btn-panico {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+    width: 100%;
+  }
+  
+  .btn-panico {
+    background: #ff4444;
+    color: white;
+    font-size: 18px;
+    padding: 20px 40px;
+    box-shadow: 0 4px 12px rgba(255,68,68,0.3);
+  }
+  
+  .coach-panico { text-align: center; padding: 40px 25px; }
+  .panico-hint { margin-top: 10px; font-size: 12px; color: #999; }
+  
+  .coming-soon {
+    background: white;
+    padding: 60px;
+    border-radius: 12px;
+    text-align: center;
+  }
+  
+  .coming-soon h2 { margin-bottom: 20px; }
+  
+  /* ============================================================
+     ESTILOS: MI PERFIL
+     ============================================================ */
 
-  <!-- Styles -->
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
-    
-    .dashboard-header {
-      background: white;
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .logo { font-size: 24px; font-weight: bold; }
-    
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    
-    #logout-btn {
-      background: #f0f0f0;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    
-    .dashboard-main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 30px 20px;
-    }
-    
-    .welcome-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 40px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-    }
-    
-    .welcome-card h1 { margin-bottom: 10px; }
-    
-    /* Tabs */
-    .tabs {
+  .perfil-container {
+    display: flex;
+    gap: 20px;
+    min-height: 600px;
+  }
+
+  .perfil-sidebar {
+    width: 250px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
+
+  .perfil-nav {
+    padding: 10px;
+  }
+
+  .perfil-nav-item {
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s;
+    margin-bottom: 5px;
+  }
+
+  .perfil-nav-item:hover {
+    background: #f5f5f5;
+    color: #667eea;
+  }
+
+  .perfil-nav-item.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .perfil-content {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 40px;
+    overflow-y: auto;
+    max-height: 80vh;
+  }
+
+  .perfil-section {
+    display: none;
+  }
+
+  .perfil-section.active {
+    display: block;
+  }
+
+  .perfil-card {
+    background: #f9f9f9;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: 1px solid #e5e5e5;
+  }
+
+  .perfil-card h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 18px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .form-grid label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+  }
+
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s;
+  }
+
+  .form-grid input:focus,
+  .form-grid select:focus,
+  .form-grid textarea:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+
+  .btn-save {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: transform 0.3s;
+  }
+
+  .btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  }
+
+  /* ============================================================
+     ESTILOS: TABS DE NEGOCIO
+     ============================================================ */
+
+    .negocio-tabs {
       display: flex;
       gap: 10px;
       margin-bottom: 30px;
-      background: white;
-      padding: 10px;
-      border-radius: 12px;
+      border-bottom: 2px solid #e5e5e5;
+      padding-bottom: 0;
     }
-    
-    .tab {
-      flex: 1;
-      padding: 15px;
-      background: transparent;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    
-    .tab:hover { background: #f0f0f0; }
-    .tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .stat-card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .stat-card h3 {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
-    }
-    
-    .stat-value {
-      font-size: 32px;
-      font-weight: bold;
-      color: #667eea;
-    }
-    
-    /* Action Cards */
-    .action-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    
-    .action-card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .action-card h3 { margin-bottom: 15px; }
-    .action-card ul { padding-left: 20px; margin-top: 10px; }
-    .action-card li { margin: 8px 0; }
-    
-    /* Coach Styles */
-    .coach-motivacion {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    
-    .quote-icon { font-size: 48px; margin-bottom: 15px; }
-    .frase { font-size: 20px; line-height: 1.6; font-style: italic; }
-    
-    .coach-estado, .coach-situacion, .coach-plan, .coach-panico {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    
-    .estado-grid { display: grid; gap: 20px; margin-bottom: 20px; }
-    .estado-item label { display: block; font-size: 14px; color: #666; margin-bottom: 8px; }
-    
-    .progress-bar {
-      width: 100%;
-      height: 12px;
-      background: #f0f0f0;
-      border-radius: 6px;
-      overflow: hidden;
-      margin-bottom: 5px;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.3s ease;
-    }
-    
-    .btn-secondary, .btn-panico {
+
+    .negocio-tab-btn {
       padding: 12px 24px;
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    
-    .btn-secondary {
-      background: #f0f0f0;
-      color: #333;
-      width: 100%;
-    }
-    
-    .btn-panico {
-      background: #ff4444;
-      color: white;
-      font-size: 18px;
-      padding: 20px 40px;
-      box-shadow: 0 4px 12px rgba(255,68,68,0.3);
-    }
-    
-    .coach-panico { text-align: center; padding: 40px 25px; }
-    .panico-hint { margin-top: 10px; font-size: 12px; color: #999; }
-    
-    .coming-soon {
-      background: white;
-      padding: 60px;
-      border-radius: 12px;
-      text-align: center;
-    }
-    
-    .coming-soon h2 { margin-bottom: 20px; }
-    
-    /* ============================================================
-       ESTILOS: MI PERFIL
-       ============================================================ */
-
-    .perfil-container {
-      display: flex;
-      gap: 20px;
-      min-height: 600px;
-    }
-
-    .perfil-sidebar {
-      width: 250px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      flex-shrink: 0;
-    }
-
-    .perfil-nav {
-      padding: 10px;
-    }
-
-    .perfil-nav-item {
-      width: 100%;
-      text-align: left;
-      padding: 15px 20px;
-      border: none;
       background: transparent;
-      border-radius: 8px;
+      border-bottom: 3px solid transparent;
       cursor: pointer;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 600;
       color: #666;
       transition: all 0.3s;
-      margin-bottom: 5px;
     }
 
-    .perfil-nav-item:hover {
-      background: #f5f5f5;
+    .negocio-tab-btn:hover {
       color: #667eea;
     }
 
-    .perfil-nav-item.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+    .negocio-tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
     }
 
-    .perfil-content {
-      flex: 1;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 40px;
-      overflow-y: auto;
-      max-height: 80vh;
-    }
-
-    .perfil-section {
+    .negocio-tab-content {
       display: none;
     }
 
-    .perfil-section.active {
+    .negocio-tab-content.active {
       display: block;
     }
 
-    .perfil-card {
+    .servicio-card {
       background: #f9f9f9;
-      padding: 25px;
+      border: 2px solid #e5e5e5;
       border-radius: 12px;
-      margin-bottom: 25px;
-      border: 1px solid #e5e5e5;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
     }
 
-    .perfil-card h3 {
-      margin-bottom: 20px;
-      color: #333;
+    .servicio-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+
+    .servicio-card.inactive {
+      opacity: 0.6;
+      background: #f5f5f5;
+    }
+
+    .servicio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .servicio-title {
       font-size: 18px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-
-    .form-grid label {
-      display: block;
-      font-size: 14px;
       font-weight: 600;
-      color: #555;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .servicio-categoria {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #667eea;
+      color: white;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .servicio-info {
+      color: #666;
+      font-size: 14px;
       margin-bottom: 8px;
     }
 
-    .form-grid input,
-    .form-grid select,
-    .form-grid textarea {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-      font-family: inherit;
-      transition: border-color 0.3s;
+    .servicio-actions {
+      display: flex;
+      gap: 8px;
     }
 
-    .form-grid input:focus,
-    .form-grid select:focus,
-    .form-grid textarea:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    .btn-save {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+    .btn-icon {
+      padding: 6px 12px;
       border: none;
-      padding: 15px 40px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
+      border-radius: 6px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      transition: transform 0.3s;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
     }
 
-    .btn-save:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    .btn-edit {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background: #2563eb;
+    }
+
+    .btn-toggle {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .btn-toggle:hover {
+      background: #d97706;
+    }
+
+    .btn-delete {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #dc2626;
     }
 
     @media (max-width: 768px) {
@@ -1277,26 +1330,24 @@
   // FUNCIÓN: Cambiar sección dentro de Mi Perfil
   // ============================================================
   function showPerfilSection(sectionName) {
-    // Ocultar todas las secciones
     document.querySelectorAll('.perfil-section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.perfil-nav-item').forEach(n => n.classList.remove('active'));
     
-    // Mostrar sección seleccionada
     const section = document.getElementById(`perfil-${sectionName}`);
     if (section) {
       section.classList.add('active');
     }
     
-    // Activar botón de navegación
     if (event && event.target) {
       event.target.classList.add('active');
     }
     
-    // Cargar datos según sección
     if (sectionName === 'persona') {
       cargarDatosPersona();
     } else if (sectionName === 'timeline') {
       cargarTimeline();
+    } else if (sectionName === 'negocio') {
+      cargarServicios();
     }
   }
 

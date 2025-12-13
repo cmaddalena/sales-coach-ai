@@ -76,7 +76,7 @@
         <div class="action-card">
           <h3>📋 Tu Perfil</h3>
           <p><strong>Nombre:</strong> <span id="perfil-nombre">-</span></p>
-          <p><strong>Negocio:</strong> <span id="perfil-negocio">-</span></p>
+          <p><strong>Negocio:</strong> <span id="perfil-negocio-overview">-</span></p>
           <p><strong>País:</strong> <span id="perfil-pais">-</span></p>
           <p><strong>Objetivo mensual:</strong> $<span id="perfil-objetivo">-</span></p>
           <p><strong>Tiempo disponible:</strong> <span id="perfil-tiempo">-</span>h/semana</p>
@@ -963,7 +963,7 @@
   }
   
   // Actualizar negocio
-  const negocioEl = document.getElementById('perfil-negocio');
+  const negocioEl = document.getElementById('perfil-negocio-overview');
   if (negocioEl) {
     negocioEl.textContent = userProfile.tipo_negocio || '-';
   }
@@ -987,6 +987,7 @@
     tiempoEl.textContent = userProfile.horas_semana_ventas || 0;
   }
 }
+
   // ============================================================
   // FUNCIÓN: Cargar contenido del dashboard según tab activa
   // ============================================================
@@ -1578,8 +1579,6 @@
   }
 </script>
 <!-- END APPEND: Services -->
-<!-- END APPEND -->
-
 <!-- APPEND: JavaScript for Mi Perfil -->
 <script>
   // ============================================================

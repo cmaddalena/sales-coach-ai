@@ -351,6 +351,66 @@
   </div>
 </div>
 
+<!-- Modal para agregar/editar ICP -->
+<div id="modal-icp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+  <div style="background: white; border-radius: 16px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+    <h2 id="modal-icp-title" style="margin-bottom: 20px; color: #333;">Agregar ICP</h2>
+
+    <form id="form-icp" onsubmit="guardarICP(event)" style="display: flex; flex-direction: column; gap: 15px;">
+
+      <input type="hidden" id="icp-id" value="">
+
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Nombre del ICP *</label>
+        <input type="text" id="icp-nombre" required placeholder="Ej: Emprendedor Tech en LatAm" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Descripción</label>
+        <textarea id="icp-descripcion" rows="3" placeholder="Describe las características principales de este perfil de cliente ideal..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Industria</label>
+          <input type="text" id="icp-industria" placeholder="Ej: Tecnología, Salud, Finanzas" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+        </div>
+
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Tamaño de Empresa</label>
+          <select id="icp-tamano-empresa" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="">Seleccionar...</option>
+            <option value="startup">Startup (1-50 empleados)</option>
+            <option value="pyme">PYME (51-500 empleados)</option>
+            <option value="corporativo">Corporativo (500+ empleados)</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Rango de Presupuesto</label>
+        <input type="text" id="icp-presupuesto" placeholder="Ej: $5,000 - $15,000 mensuales" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Desafíos Principales</label>
+        <textarea id="icp-desafios" rows="3" placeholder="¿Cuáles son los principales desafíos que enfrenta este perfil de cliente?" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="submit" style="flex: 1; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+          Guardar
+        </button>
+        <button type="button" onclick="cerrarModalICP()" style="flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">
+          Cancelar
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
@@ -805,6 +865,72 @@
 
     .btn-delete:hover {
       background: #dc2626;
+    }
+
+    .icp-card {
+      background: #f9f9f9;
+      border: 2px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+
+    .icp-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+
+    .icp-card.inactive {
+      opacity: 0.6;
+      background: #f5f5f5;
+    }
+
+    .icp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .icp-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .icp-industria {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #10b981;
+      color: white;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .icp-info {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .icp-desafios {
+      color: #666;
+      font-size: 14px;
+      font-style: italic;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #f0f9ff;
+      border-left: 3px solid #0ea5e9;
+      border-radius: 4px;
+    }
+
+    .icp-actions {
+      display: flex;
+      gap: 8px;
     }
 
     @media (max-width: 768px) {
@@ -1352,6 +1478,10 @@
     if (tabName === 'servicios') {
       cargarServicios();
     }
+    
+    if (tabName === 'icps') {
+      cargarICPs();
+    }
   }
 
   // ============================================================
@@ -1595,6 +1725,244 @@
     } catch (error) {
       console.error('Error eliminando servicio:', error);
       alert('❌ Error al eliminar el servicio');
+    }
+  }
+
+  // ============================================================
+  // FUNCIONES PARA ICPs
+  // ============================================================
+
+  // ============================================================
+  // FUNCIÓN: Cargar ICPs desde API
+  // ============================================================
+  async function cargarICPs() {
+    const userId = getUserId();
+    if (!userId) return;
+
+    const container = document.getElementById('icps-list');
+    container.innerHTML = '<p style="text-align: center; color: #999;">Cargando ICPs...</p>';
+
+    try {
+      const response = await fetch(`/api/icps?userId=${encodeURIComponent(userId)}&includeInactive=true`);
+      const { icps } = await response.json();
+
+      mostrarICPs(icps);
+
+    } catch (error) {
+      console.error('Error cargando ICPs:', error);
+      container.innerHTML = '<p style="text-align: center; color: #ef4444;">Error cargando ICPs</p>';
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Mostrar ICPs en la lista
+  // ============================================================
+  function mostrarICPs(icps) {
+    const container = document.getElementById('icps-list');
+
+    if (!icps || icps.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 60px 20px;">
+          <p style="font-size: 48px; margin-bottom: 10px;">🎯</p>
+          <p style="color: #999; font-size: 18px; margin-bottom: 20px;">No tenés ICPs configurados</p>
+          <button onclick="mostrarModalICP()" style="padding: 10px 24px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            + Agregar tu primer ICP
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = icps.map(icp => {
+      const tamanoEmoji = {
+        'startup': '🚀',
+        'pyme': '🏢',
+        'corporativo': '🏗️',
+        'otro': '💼'
+      };
+
+      const emoji = tamanoEmoji[icp.tamano_empresa] || '🎯';
+      const inactiveClass = icp.activo ? '' : 'inactive';
+
+      return `
+        <div class="icp-card ${inactiveClass}">
+          <div class="icp-header">
+            <div style="flex: 1;">
+              <div class="icp-title">
+                ${emoji} ${icp.nombre}
+                ${icp.industria ? `<span class="icp-industria">${icp.industria}</span>` : ''}
+                ${!icp.activo ? '<span style="color: #ef4444; font-size: 14px; margin-left: 10px;">(Inactivo)</span>' : ''}
+              </div>
+              ${icp.descripcion ? `<p class="icp-info">${icp.descripcion}</p>` : ''}
+              <div class="icp-info">
+                ${icp.tamano_empresa ? `🏢 ${icp.tamano_empresa}` : ''}
+                ${icp.presupuesto ? ` • 💰 ${icp.presupuesto}` : ''}
+              </div>
+              ${icp.desafios ? `<div class="icp-desafios">🎯 Desafíos: ${icp.desafios}</div>` : ''}
+            </div>
+            <div class="icp-actions">
+              <button onclick="editarICP('${icp.id}')" class="btn-icon btn-edit">
+                ✏️ Editar
+              </button>
+              <button onclick="toggleICP('${icp.id}', ${!icp.activo})" class="btn-icon btn-toggle">
+                ${icp.activo ? '⏸️ Desactivar' : '▶️ Activar'}
+              </button>
+              <button onclick="eliminarICP('${icp.id}')" class="btn-icon btn-delete">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============================================================
+  // FUNCIÓN: Mostrar modal ICP
+  // ============================================================
+  function mostrarModalICP(icpData = null) {
+    const modal = document.getElementById('modal-icp');
+    const title = document.getElementById('modal-icp-title');
+    const form = document.getElementById('form-icp');
+
+    form.reset();
+    document.getElementById('icp-id').value = '';
+
+    if (icpData) {
+      title.textContent = 'Editar ICP';
+      document.getElementById('icp-id').value = icpData.id;
+      document.getElementById('icp-nombre').value = icpData.nombre || '';
+      document.getElementById('icp-descripcion').value = icpData.descripcion || '';
+      document.getElementById('icp-industria').value = icpData.industria || '';
+      document.getElementById('icp-tamano-empresa').value = icpData.tamano_empresa || '';
+      document.getElementById('icp-presupuesto').value = icpData.presupuesto || '';
+      document.getElementById('icp-desafios').value = icpData.desafios || '';
+    } else {
+      title.textContent = 'Agregar ICP';
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function cerrarModalICP() {
+    document.getElementById('modal-icp').style.display = 'none';
+  }
+
+  // ============================================================
+  // FUNCIÓN: Guardar ICP
+  // ============================================================
+  async function guardarICP(event) {
+    event.preventDefault();
+
+    const userId = getUserId();
+    if (!userId) {
+      alert('Error: No se pudo identificar el usuario');
+      return;
+    }
+
+    const id = document.getElementById('icp-id').value;
+    const isEditing = !!id;
+
+    const icpData = {
+      nombre: document.getElementById('icp-nombre').value,
+      descripcion: document.getElementById('icp-descripcion').value || null,
+      industria: document.getElementById('icp-industria').value || null,
+      tamano_empresa: document.getElementById('icp-tamano-empresa').value || null,
+      presupuesto: document.getElementById('icp-presupuesto').value || null,
+      desafios: document.getElementById('icp-desafios').value || null
+    };
+
+    if (isEditing) {
+      icpData.id = id;
+    } else {
+      icpData.user_id = userId;
+      icpData.activo = true;
+    }
+
+    try {
+      const response = await fetch('/api/icps', {
+        method: isEditing ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(icpData)
+      });
+
+      if (!response.ok) throw new Error('Error al guardar');
+
+      cerrarModalICP();
+      await cargarICPs();
+      alert(`✅ ICP ${isEditing ? 'actualizado' : 'creado'} exitosamente`);
+
+    } catch (error) {
+      console.error('Error guardando ICP:', error);
+      alert('❌ Error al guardar el ICP');
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Editar ICP
+  // ============================================================
+  async function editarICP(icpId) {
+    const userId = getUserId();
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`/api/icps?userId=${userId}&includeInactive=true`);
+      const { icps } = await response.json();
+
+      const icp = icps.find(i => i.id === icpId);
+      if (icp) {
+        mostrarModalICP(icp);
+      }
+    } catch (error) {
+      console.error('Error cargando ICP:', error);
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Toggle ICP
+  // ============================================================
+  async function toggleICP(icpId, activar) {
+    try {
+      const response = await fetch('/api/icps', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: icpId,
+          activo: activar
+        })
+      });
+
+      if (!response.ok) throw new Error('Error al actualizar');
+
+      await cargarICPs();
+
+    } catch (error) {
+      console.error('Error toggle ICP:', error);
+      alert('❌ Error al actualizar el ICP');
+    }
+  }
+
+  // ============================================================
+  // FUNCIÓN: Eliminar ICP
+  // ============================================================
+  async function eliminarICP(icpId) {
+    if (!confirm('¿Estás seguro de eliminar este ICP? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/icps?id=${encodeURIComponent(icpId)}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) throw new Error('Error al eliminar');
+
+      await cargarICPs();
+      alert('✅ ICP eliminado');
+
+    } catch (error) {
+      console.error('Error eliminando ICP:', error);
+      alert('❌ Error al eliminar el ICP');
     }
   }
 </script>
@@ -1921,8 +2289,13 @@
             
             <!-- TAB: ICPs -->
             <div id="negocio-icps" class="negocio-tab-content">
-              <h3>ICPs (Ideal Customer Profiles)</h3>
-              <p style="color: #999; margin-top: 20px;">Próximamente...</p>
+              <div class="section-header">
+                <h3>ICPs (Ideal Customer Profiles)</h3>
+                <button class="btn-primary" onclick="mostrarModalICP()">Agregar ICP</button>
+              </div>
+              <div id="icps-list" class="items-list">
+                <!-- Los ICPs se cargarán aquí dinámicamente -->
+              </div>
             </div>
             
             <!-- TAB: Objetivos -->

@@ -306,6 +306,22 @@
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
         <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Setup Fee ($)</label>
+          <input type="number" id="servicio-setup-fee" placeholder="0" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+          <small style="color: #999; font-size: 12px;">Cargo único inicial (opcional)</small>
+        </div>
+        
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">¿Es Recurrente?</label>
+          <select id="servicio-recurrente" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <option value="false">No (Pago único)</option>
+            <option value="true">Sí (Recurrente)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div>
           <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">Duración</label>
           <input type="text" id="servicio-duracion" placeholder="Ej: 3 meses, 4 horas" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
         </div>
@@ -1445,6 +1461,8 @@
       document.getElementById('servicio-precio-base').value = servicioData.precio_base || '';
       document.getElementById('servicio-precio-minimo').value = servicioData.precio_minimo || '';
       document.getElementById('servicio-precio-maximo').value = servicioData.precio_maximo || '';
+      document.getElementById('servicio-setup-fee').value = servicioData.setup_fee || '';
+      document.getElementById('servicio-recurrente').value = servicioData.recurrente ? 'true' : 'false';
       document.getElementById('servicio-duracion').value = servicioData.duracion || '';
       document.getElementById('servicio-tipo-facturacion').value = servicioData.tipo_facturacion || '';
     } else {
@@ -1480,6 +1498,8 @@
       precio_base: parseFloat(document.getElementById('servicio-precio-base').value) || null,
       precio_minimo: parseFloat(document.getElementById('servicio-precio-minimo').value) || null,
       precio_maximo: parseFloat(document.getElementById('servicio-precio-maximo').value) || null,
+      setup_fee: parseFloat(document.getElementById('servicio-setup-fee').value) || null,
+      recurrente: document.getElementById('servicio-recurrente').value === 'true',
       duracion: document.getElementById('servicio-duracion').value || null,
       tipo_facturacion: document.getElementById('servicio-tipo-facturacion').value || null
     };
